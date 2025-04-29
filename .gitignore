@@ -1,0 +1,22 @@
+dataset/
+Ai_Finder_Backend/
+ChatBackend/
+TrainModel/
+Frontend/node_modules/
+Backend/node_modules/
+
+
+*.h5
+*.hdf5
+*.ckpt
+
+
+# Plot images
+*.png
+*.jpg
+*.webp
+*.avif
+*.jpeg
+
+Backend/.env
+
