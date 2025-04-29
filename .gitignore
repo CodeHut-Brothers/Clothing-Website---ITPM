@@ -1,6 +1,5 @@
 dataset/
 
-ChatBackend/
 
 Frontend/node_modules/
 Backend/node_modules/
@@ -17,5 +16,5 @@ Backend/node_modules/
 *.webp
 *.avif
 *.jpeg
-
+.env
 
