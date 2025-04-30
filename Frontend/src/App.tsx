@@ -16,6 +16,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import Confirmation from './pages/Confirmation';
 import OrderEditPage from "./components/admincom/OrderEditPage"; 
 import AIItemFinder from './pages/AIItemFinder';
+import AddUsersPage from './components/admincom/AddUserComponent';
+import AddUserComponent from './components/admincom/AddUserComponent';
 
 
 function App() {
@@ -39,6 +41,8 @@ function App() {
             <Route path="/cart/Confirmation" element={<Confirmation />} />
             <Route path="/order-edit/:orderId" element={<OrderEditPage />} />
             <Route path="/ai-item-finder" element={<AIItemFinder />} />
+            <Route path="/add-user" element={<AddUsersPage />} />
+            <Route path="/admin/dashboard" element={<AddUserComponent/>} />
           </Routes>
         </div>
       </Router>
