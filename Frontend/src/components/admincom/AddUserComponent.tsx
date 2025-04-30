@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, User, Key, Globe, AlertCircle, X, Eye, EyeOff } from 'lucide-react';
 
 // Simulate ToastContainer for demonstration
@@ -19,6 +20,7 @@ interface FormData {
 }
 
 const AddUserComponent: React.FC = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -113,6 +115,8 @@ const AddUserComponent: React.FC = () => {
         confirmPassword: '',
         profileImage: '',
       });
+
+      navigate('/admin/dashboard');
     } catch (error: any) {
       console.error('Error:', error);
       toast.error(error.message || 'Error adding user. Please try again.');
@@ -343,13 +347,14 @@ const AddUserComponent: React.FC = () => {
             </div>
 
             {/* Form Actions */}
-            <div className="mt-8 flex justify-end">
-              <button
-                type="button"
-                className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg mr-2 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
+           <div className="mt-8 flex justify-end">
+  <button
+    type="button"
+    onClick={() => navigate('/admin/dashboard')} // Navigate to ProfileUpdatePage on cancel
+    className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg mr-2 hover:bg-gray-50 transition-colors"
+  >
+    Cancel
+  </button>
               <button
                 type="submit"
                 disabled={loading}
