@@ -22,7 +22,20 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['mens', 'womens', 'caps', 'bags', 'shoes', 'unisex'], // Ensures the category is one of these values
+    enum: [
+      'backpack',
+      'cap',
+      'Casual',
+      'Handbag',
+      'hoodie',
+      'jeans',
+      'pants',
+      'polo_tshirt',
+      'shoes',
+      'shorts',
+      'skirt',
+      'tshirt'
+    ], // Ensures the category is one of these values
     required: true,
   },
   images: {
