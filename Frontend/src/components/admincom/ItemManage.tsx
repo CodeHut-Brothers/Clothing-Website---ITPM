@@ -354,14 +354,20 @@ const ItemManage = () => {
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                           required
                         >
-                          <option value="">Select Category</option>
-                          <option value="mens">Mens</option>
-                          <option value="womens">Womens</option>
-                          <option value="caps">Caps</option>
-                          <option value="bags">Bags</option>
-                          <option value="shoes">Shoes</option>
-                          <option value="unisex">Unisex</option>
-                        </select>
+                            <option value="">Select Category</option>
+                        <option value="backpack">Backpack</option>
+                        <option value="cap">Cap</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Handbag">Handbag</option>
+                        <option value="hoodie">Hoodie</option>
+                        <option value="jeans">Jeans</option>
+                        <option value="pants">Pants</option>
+                        <option value="polo_tshirt">Polo T-Shirt</option>
+                        <option value="shoes">Shoes</option>
+                        <option value="shorts">Shorts</option>
+                        <option value="skirt">Skirt</option>
+                        <option value="tshirt">T-Shirt</option>
+                      </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
