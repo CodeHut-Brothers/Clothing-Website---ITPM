@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Edit2, Trash2, X, Users, UserPlus, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
+const ViewUsersPage = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
 
 // Simulate ToastContainer for demonstration
 const ToastContainer = () => <div id="toast-container"></div>;
@@ -9,13 +13,12 @@ const toast = {
   error: (msg) => console.log('Error:', msg)
 };
 
-const ViewUsersPage = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editUser, setEditUser] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+const [users, setUsers] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+const [editUser, setEditUser] = useState(null);
+const [showModal, setShowModal] = useState(false);
+const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch all users from the backend
   useEffect(() => {
@@ -250,11 +253,17 @@ const ViewUsersPage = () => {
             >
               <FileText className="h-5 w-5 mr-2" />
               Download PDF Report
+
             </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center transition-colors">
-              <UserPlus className="h-5 w-5 mr-2" />
-              Add New User
-            </button>
+            
+            <button
+      onClick={() => navigate('/add-user')} // Navigate to AddUsersPage
+      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+    >
+      <UserPlus className="h-5 w-5 mr-2" />
+      Add New User
+    </button>
+
           </div>
         </div>
         
