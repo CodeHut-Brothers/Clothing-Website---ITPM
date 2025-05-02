@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
-import { Search } from 'lucide-react';
+import { Search, Filter, X, ShoppingBag } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Category = 'all' | 'mens' | 'womens' | 'caps' | 'bags' | 'shoes' | 'unisex';
 
@@ -22,6 +23,15 @@ export default function Store() {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Sample featured products from your image URLs
+  const featuredImages = [
+    "https://i.ibb.co/QJM0TMP/DSC07607.png",
+    "https://i.ibb.co/HCjwQzC/DSC07612.png",
+    "https://i.ibb.co/y03MQVW/DSC07627.png",
+    "https://i.ibb.co/2Ff35RM/DSC07632.png"
+  ];
 
   // Fetch products from the backend
   useEffect(() => {
@@ -49,13 +59,91 @@ export default function Store() {
 
   const categories: Category[] = ['all', 'mens', 'womens', 'caps', 'bags', 'shoes', 'unisex'];
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          <ShoppingBag size={48} className="text-black" />
+        </motion.div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white">
+        <div className="text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <X size={48} className="mx-auto text-red-500 mb-4" />
+            <h2 className="text-2xl font-bold text-gray-800">{error}</h2>
+            <p className="mt-2 text-gray-600">Please try again later</p>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pt-16">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero section with featured products */}
+      <div className="w-full bg-gradient-to-r from-gray-900 to-black text-white">
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">Discover Your Style</h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Explore our latest collection of premium fashion items
+            </p>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 1 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12"
+          >
+            {featuredImages.map((img, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                className="relative overflow-hidden rounded-lg aspect-square"
+              >
+                <img 
+                  src={img} 
+                  alt="Featured product" 
+                  className="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-110"
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Main products section */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8"
+        >
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -63,32 +151,82 @@ export default function Store() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black shadow-sm"
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors
-                  ${selectedCategory === category
-                    ? 'bg-black text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-3 rounded-xl bg-black text-white"
+            >
+              <Filter size={18} />
+              <span>Filter</span>
+            </button>
+            
+            {showFilters && (
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="flex gap-2 overflow-x-auto py-2"
               >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </button>
-            ))}
+                {categories.map((category) => (
+                  <motion.button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors
+                      ${selectedCategory === category
+                        ? 'bg-black text-white shadow-md'
+                        : 'bg-white hover:bg-gray-100 border border-gray-200'
+                      }`}
+                  >
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {sortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {/* Products Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+        >
+          <AnimatePresence>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {sortedProducts.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { delay: index * 0.1, duration: 0.5 }
+                  }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                  className="transform transition-all duration-300 hover:shadow-xl rounded-2xl overflow-hidden bg-white"
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          </AnimatePresence>
+        </motion.div>
+        
+        {sortedProducts.length === 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-16"
+          >
+            <p className="text-gray-500 text-lg">No products found matching your criteria</p>
+          </motion.div>
+        )}
       </div>
     </div>
   );

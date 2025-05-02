@@ -84,7 +84,7 @@ export default function AdminLogin() {
       {/* Left Panel - Brand Display */}
       <div className="hidden lg:flex flex-col w-1/2 items-center justify-center relative z-20">
         <div className="animate-fade-in-up">
-          <h1 className="text-6xl font-bold mb-4 tracking-tight">AESTHETIQUE</h1>
+          <h1 className="text-6xl font-bold mb-4 tracking-tight">CANNIBAL.CO</h1>
           <p className="text-xl text-gray-300 mb-8 max-w-md text-center">
             Admin portal for our exclusive clothing collection
           </p>
