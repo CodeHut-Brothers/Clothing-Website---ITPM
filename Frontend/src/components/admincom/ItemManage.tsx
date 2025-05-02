@@ -356,7 +356,7 @@ const ItemManage = () => {
                         >
                             <option value="">Select Category</option>
                         <option value="backpack">Backpack</option>
-                        <option value="cap">Cap</option>
+                        <option value="caps">Caps</option>
                         <option value="Casual">Casual</option>
                         <option value="Handbag">Handbag</option>
                         <option value="hoodie">Hoodie</option>
