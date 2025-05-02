@@ -22,7 +22,22 @@ export interface Product {
   name: string;
   price: number;
   description: string;
-  category: 'mens' | 'womens' | 'caps' | 'bags' | 'shoes' | 'unisex' ;
+
+  category:
+  | 'backpack'
+  | 'cap'
+  | 'Casual'
+  | 'Handbag'
+  | 'hoodie'
+  | 'jeans'
+  | 'pants'
+  | 'polo_tshirt'
+  | 'shoes'
+  | 'shorts'
+  | 'skirt'
+  | 'tshirt';
+
+
   images: string[];
   sizes: string[];
   colors: string[];
@@ -396,7 +411,20 @@ const AIItemFinder = () => {
                       <div className="mb-4">
                         <h3 className="text-sm font-medium mb-2">Categories</h3>
                         <div className="flex flex-wrap gap-2">
-                          {['mens', 'womens', 'caps', 'bags', 'shoes', 'unisex'].map((category) => (
+                          {[
+                              'backpack',
+                              'cap',
+                              'Casual',
+                              'Handbag',
+                              'hoodie',
+                              'jeans',
+                              'pants',
+                              'polo_tshirt',
+                              'shoes',
+                              'shorts',
+                              'skirt',
+                              'tshirt'
+                            ].map((category) => (
                             <button
                               key={category}
                               onClick={() => toggleFilter(category)}
