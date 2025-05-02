@@ -371,6 +371,7 @@ const AIItemFinder = () => {
                           <Camera className="w-4 h-4 mr-2" />
                           Take Photo
                         </button>
+                        
                         <button 
                           onClick={() => setCameraMode(false)}
                           className="px-6 py-2 bg-white border border-gray-300 text-gray-800 font-medium rounded-full hover:bg-gray-50 transition-all"

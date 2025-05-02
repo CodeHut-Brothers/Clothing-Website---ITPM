@@ -473,7 +473,7 @@ export default function Home() {
     const fetchFeaturedProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/products/new');
+        const response = await axios.get('http://localhost:5000/api/products');
         setFeaturedProducts(response.data);
         setLoading(false);
       } catch (err) {
