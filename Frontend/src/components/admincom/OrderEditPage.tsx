@@ -116,15 +116,18 @@ export default function OrderEditPage() {
         "Are you sure you want to delete this order?"
       );
       if (!confirmDelete) return;
-
+  
       await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
       toast.success("Order deleted successfully!");
-      navigate("/admin/orders"); // Navigate to Order Dashboard after deletion
+      
+      navigate("/admin/dashboard"); // Correct relative path
+      window.location.reload();
     } catch (err) {
       setError("Error deleting order.");
       toast.error("Failed to delete order!");
     }
   };
+  
 
   const handleBack = () => {
     navigate("/admin/dashboard"); // Navigate to Order Dashboard
