@@ -371,6 +371,7 @@ const AIItemFinder = () => {
                           <Camera className="w-4 h-4 mr-2" />
                           Take Photo
                         </button>
+                        
                         <button 
                           onClick={() => setCameraMode(false)}
                           className="px-6 py-2 bg-white border border-gray-300 text-gray-800 font-medium rounded-full hover:bg-gray-50 transition-all"
@@ -394,7 +395,7 @@ const AIItemFinder = () => {
               )}
               
               {/* Similarity threshold slider */}
-              {selectedImage && (
+              {/*  {selectedImage && (
                 <div className="mt-6 px-1">
                   <div className="flex justify-between items-center mb-2">
                     <label className="text-sm font-medium text-gray-700">Similarity Threshold: {similarityThreshold}%</label>
@@ -412,7 +413,7 @@ const AIItemFinder = () => {
                     <span>Exact Matches</span>
                   </div>
                 </div>
-              )}
+              )} */}
 
               {isSearching && (
                 <div className="mt-10 text-center">
@@ -424,7 +425,8 @@ const AIItemFinder = () => {
               )}
 
               {/* Backend Similar Images */}
-              {similarImages.length > 0 && (
+
+              {/* {similarImages.length > 0 && (
                 <div className="mt-8">
                   <h3 className="text-sm font-medium mb-3 flex items-center">
                     <Search className="w-4 h-4 mr-2" />
@@ -442,7 +444,7 @@ const AIItemFinder = () => {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
               
               {/* NEW SECTION: AI Matched Products */}
               {predictedCategory && searchResults.length > 0 && (

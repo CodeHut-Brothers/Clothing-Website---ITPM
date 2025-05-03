@@ -23,6 +23,19 @@ exports.getAllProductsAcc = async (req, res) => {
   }
 };
 
+exports.getLatestProducts = async (req, res) => {
+  try {
+    const latestProducts = await Product.find()
+      .sort({ createdAt: -1 })  // Sort by newest first
+      .limit(10);               // Change the limit as needed
+    res.json(latestProducts);
+  } catch (error) {
+    console.error('Error fetching latest products:', error);
+    res.status(500).json({ message: 'Failed to fetch latest products' });
+  }
+};
+
+
 // GET a single product by ID
 exports.getProductById = async (req, res) => {
   const { id } = req.params;
