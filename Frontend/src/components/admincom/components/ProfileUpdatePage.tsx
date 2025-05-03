@@ -5,7 +5,13 @@ import { useNavigate } from 'react-router-dom';
 export default function ProfileUpdatePage() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<{
+    _id?: string;
+    name: string;
+    email: string;
+    profileImage: string;
+    role: string;
+  }>({
     name: '',
     email: '',
     profileImage: '',
@@ -44,11 +50,19 @@ export default function ProfileUpdatePage() {
     fetchUserData();
   }, []);
 
-  const handleProfileUpdate = async (e) => {
+  interface User {
+    _id?: string;
+    name: string;
+    email: string;
+    profileImage: string;
+    role: string;
+  }
+
+  const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/users/edit/${user._id}`, user, {
+      const response = await axios.put<{ data: User }>(`http://localhost:5000/api/users/edit/${user._id}`, user, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, User, Key, Globe, AlertCircle, X, Eye, EyeOff } from 'lucide-react';
-
-// Simulate ToastContainer for demonstration
-const ToastContainer = () => <div id="toast-container"></div>;
-const toast = {
-  success: (msg) => console.log('Success:', msg),
-  error: (msg) => console.log('Error:', msg)
-};
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface FormData {
   name: string;
@@ -16,15 +11,15 @@ interface FormData {
   username: string;
   password: string;
   confirmPassword: string;
-  profileImage: string;
+  profileImage?: string;
 }
 
 const AddUserComponent: React.FC = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
-    role: 'Manager', // Default role
+    role: 'Manager',
     username: '',
     password: '',
     confirmPassword: '',
@@ -35,9 +30,87 @@ const AddUserComponent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    
+    switch (name) {
+      case 'name':
+        if (!value.trim()) error = 'Name is required';
+        else if (value.length < 2) error = 'Name must be at least 2 characters';
+        break;
+      case 'email':
+        if (!value.trim()) error = 'Email is required';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email format';
+        break;
+      case 'username':
+        if (!value.trim()) error = 'Username is required';
+        else if (value.length < 3) error = 'Username must be at least 3 characters';
+        else if (!/^[a-zA-Z0-9_]+$/.test(value)) error = 'Username can only contain letters, numbers, and underscores';
+        break;
+      case 'password':
+        if (formData.role !== 'Staff') {
+          if (!value) error = 'Password is required';
+          else if (value.length < 5) error = 'Password must be at least 5 characters';
+          else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value) && !/\d/.test(value)) {
+            error = 'Password must contain at least one number or symbol';
+          }
+        }
+        break;
+      case 'confirmPassword':
+        if (formData.role !== 'Staff' && value !== formData.password) {
+          error = 'Passwords do not match';
+        }
+        break;
+      case 'profileImage':
+        if (value && !/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif))$/i.test(value)) {
+          error = 'Please enter a valid image URL (jpg, png, gif)';
+        }
+        break;
+      default:
+        break;
+    }
+
+    setFieldErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    validateField(name, value);
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const requiredFields: (keyof FormData)[] = ['name', 'email', 'role', 'username'];
+
+    requiredFields.forEach(field => {
+      if (!formData[field as keyof FormData]?.toString().trim()) {
+        setFieldErrors(prev => ({ ...prev, [field]: `${field.charAt(0).toUpperCase() + field.slice(1)} is required` }));
+        isValid = false;
+      }
+    });
+
+    if (formData.role === 'Admin' || formData.role === 'Manager') {
+      if (!formData.password) {
+        setFieldErrors(prev => ({ ...prev, password: 'Password is required' }));
+        isValid = false;
+      }
+      if (!formData.confirmPassword) {
+        setFieldErrors(prev => ({ ...prev, confirmPassword: 'Please confirm your password' }));
+        isValid = false;
+      }
+    }
+
+    Object.keys(formData).forEach(field => {
+      if (!validateField(field, formData[field as keyof FormData]?.toString() || '')) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,67 +118,58 @@ const AddUserComponent: React.FC = () => {
     setError('');
     setLoading(true);
 
-    // Basic field validation
-    if (
-      !formData.name.trim() ||
-      !formData.email.trim() ||
-      !formData.role.trim() ||
-      !formData.username.trim() ||
-      !formData.profileImage.trim()
-    ) {
-      setError('Please fill all the fields.');
+    if (!validateForm()) {
       setLoading(false);
       return;
-    }
-
-    // Only validate password if role is Admin or Manager
-    if (formData.role === 'Admin' || formData.role === 'Manager') {
-      if (!formData.password || !formData.confirmPassword) {
-        setError('Please enter and confirm the password.');
-        setLoading(false);
-        return;
-      }
-      if (formData.password !== formData.confirmPassword) {
-        setError('Passwords do not match!');
-        setLoading(false);
-        return;
-      }
     }
 
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Unauthorized: No token found.');
+        toast.error('Unauthorized: No token found.');
         setLoading(false);
         return;
       }
 
-      // Exclude password fields if role is Staff
-      const payload = { ...formData };
-      if (formData.role === 'Staff') {
-        delete payload.password;
-        delete payload.confirmPassword;
+      const payload: any = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        username: formData.username,
+      };
+
+      if (formData.role === 'Admin' || formData.role === 'Manager') {
+        payload.password = formData.password;
       }
 
-      // Using fetch instead of axios
-      const response = await fetch(
-        'http://localhost:5000/api/users/add',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      if (formData.profileImage) {
+        payload.profileImage = formData.profileImage;
+      }
+
+      const response = await fetch('http://localhost:5000/api/users/add', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const responseData = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error adding user');
+        throw new Error(responseData.message || 'Error adding user');
       }
 
-      toast.success('User added successfully!');
+      toast.success('User added successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
       setFormData({
         name: '',
         email: '',
@@ -116,16 +180,18 @@ const AddUserComponent: React.FC = () => {
         profileImage: '',
       });
 
-      navigate('/admin/dashboard');
+      setTimeout(() => {
+        navigate('/admin/dashboard');
+      }, 1500);
     } catch (error: any) {
       console.error('Error:', error);
       toast.error(error.message || 'Error adding user. Please try again.');
+      setError(error.message || 'Error adding user. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Role badge color mapping
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'Admin':
@@ -146,13 +212,11 @@ const AddUserComponent: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {/* Form Header */}
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
             <h2 className="text-white text-lg font-medium">User Information</h2>
             <p className="text-blue-100 text-sm">Enter the details of the new user</p>
           </div>
 
-          {/* Form Content */}
           <form onSubmit={handleSubmit} className="p-6">
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
@@ -171,9 +235,8 @@ const AddUserComponent: React.FC = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Name Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name*</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-gray-400" />
@@ -183,15 +246,16 @@ const AddUserComponent: React.FC = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    onBlur={(e) => validateField('name', e.target.value)}
+                    className={`pl-10 w-full px-4 py-2.5 border ${fieldErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                     placeholder="John Doe"
                   />
                 </div>
+                {fieldErrors.name && <p className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>}
               </div>
 
-              {/* Email Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address*</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
@@ -201,15 +265,16 @@ const AddUserComponent: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    onBlur={(e) => validateField('email', e.target.value)}
+                    className={`pl-10 w-full px-4 py-2.5 border ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                     placeholder="john.doe@example.com"
                   />
                 </div>
+                {fieldErrors.email && <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>}
               </div>
 
-              {/* Username Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Username*</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-gray-400" />
@@ -219,15 +284,16 @@ const AddUserComponent: React.FC = () => {
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    onBlur={(e) => validateField('username', e.target.value)}
+                    className={`pl-10 w-full px-4 py-2.5 border ${fieldErrors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                     placeholder="johndoe"
                   />
                 </div>
+                {fieldErrors.username && <p className="mt-1 text-sm text-red-600">{fieldErrors.username}</p>}
               </div>
 
-              {/* Role Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Role*</label>
                 <select
                   name="role"
                   value={formData.role}
@@ -246,12 +312,10 @@ const AddUserComponent: React.FC = () => {
               </div>
             </div>
 
-            {/* Password Fields - Conditionally Rendered */}
             {(formData.role === 'Admin' || formData.role === 'Manager') && (
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Password Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Password*</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Key className="h-5 w-5 text-gray-400" />
@@ -261,7 +325,8 @@ const AddUserComponent: React.FC = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      onBlur={(e) => validateField('password', e.target.value)}
+                      className={`pl-10 w-full px-4 py-2.5 border ${fieldErrors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                       placeholder="••••••••"
                     />
                     <button
@@ -276,11 +341,16 @@ const AddUserComponent: React.FC = () => {
                       )}
                     </button>
                   </div>
+                  {fieldErrors.password && <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>}
+                  {!fieldErrors.password && formData.password && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Password strength: {formData.password.length >= 8 ? 'Strong' : formData.password.length >= 5 ? 'Medium' : 'Weak'}
+                    </p>
+                  )}
                 </div>
 
-                {/* Confirm Password Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password*</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Key className="h-5 w-5 text-gray-400" />
@@ -290,7 +360,8 @@ const AddUserComponent: React.FC = () => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      onBlur={(e) => validateField('confirmPassword', e.target.value)}
+                      className={`pl-10 w-full px-4 py-2.5 border ${fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                       placeholder="••••••••"
                     />
                     <button
@@ -305,11 +376,11 @@ const AddUserComponent: React.FC = () => {
                       )}
                     </button>
                   </div>
+                  {fieldErrors.confirmPassword && <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmPassword}</p>}
                 </div>
               </div>
             )}
 
-            {/* Profile Image URL */}
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image URL</label>
               <div className="relative">
@@ -321,10 +392,12 @@ const AddUserComponent: React.FC = () => {
                   name="profileImage"
                   value={formData.profileImage}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="https://example.com/image.jpg"
+                  onBlur={(e) => validateField('profileImage', e.target.value)}
+                  className={`pl-10 w-full px-4 py-2.5 border ${fieldErrors.profileImage ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  placeholder="https://example.com/image.jpg (optional)"
                 />
               </div>
+              {fieldErrors.profileImage && <p className="mt-1 text-sm text-red-600">{fieldErrors.profileImage}</p>}
               
               {formData.profileImage && (
                 <div className="mt-4 flex items-center">
@@ -346,19 +419,18 @@ const AddUserComponent: React.FC = () => {
               )}
             </div>
 
-            {/* Form Actions */}
-           <div className="mt-8 flex justify-end">
-  <button
-    type="button"
-    onClick={() => navigate('/admin/dashboard')} // Navigate to ProfileUpdatePage on cancel
-    className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg mr-2 hover:bg-gray-50 transition-colors"
-  >
-    Cancel
-  </button>
+            <div className="mt-8 flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate('/admin/dashboard')}
+                className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg mr-2 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-70"
               >
                 {loading ? (
                   <>

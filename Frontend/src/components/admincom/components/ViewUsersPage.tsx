@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Edit2, Trash2, X, Users, UserPlus, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ViewUsersPage = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  interface User {
+    _id: string;
+    name: string;
+    email: string;
+    username: string;
+    role: string;
+  }
 
-// Simulate ToastContainer for demonstration
-const ToastContainer = () => <div id="toast-container"></div>;
-const toast = {
-  success: (msg) => console.log('Success:', msg),
-  error: (msg) => console.log('Error:', msg)
-};
-
-const [users, setUsers] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
-const [editUser, setEditUser] = useState(null);
-const [showModal, setShowModal] = useState(false);
-const [searchTerm, setSearchTerm] = useState('');
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch all users from the backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Using fetch instead of axios
         const response = await fetch('http://localhost:5000/api/users/viewusers', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
@@ -37,6 +38,7 @@ const [searchTerm, setSearchTerm] = useState('');
         setUsers(data);
       } catch (error) {
         setError('Error fetching users');
+        toast.error('Error fetching users');
       } finally {
         setLoading(false);
       }
@@ -46,22 +48,21 @@ const [searchTerm, setSearchTerm] = useState('');
   }, []);
 
   // Handle Edit button click
-  const handleEdit = (user) => {
+  const handleEdit = (user: User) => {
     setEditUser(user);
     setShowModal(true);
   };
 
   // Handle Input Change in Modal
-  const handleChange = (e) => {
-    setEditUser({ ...editUser, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    setEditUser({ ...editUser!, [e.target.name]: e.target.value });
   };
 
   // Handle Update user
   const handleUpdate = async () => {
     try {
-      // Using fetch instead of axios
       const response = await fetch(
-        `http://localhost:5000/api/users/edit/${editUser._id}`,
+        `http://localhost:5000/api/users/edit/${editUser?._id}`,
         {
           method: 'PUT',
           headers: { 
@@ -79,21 +80,30 @@ const [searchTerm, setSearchTerm] = useState('');
       const updatedUser = await response.json();
 
       // Update UI
-      setUsers(users.map((user) => (user._id === editUser._id ? updatedUser : user)));
+      if (editUser) {
+        setUsers(users.map((user) => (user._id === editUser._id ? updatedUser : user)));
+      }
       toast.success('User updated successfully!');
       setShowModal(false);
     } catch (error) {
-      toast.error(error.message || 'Failed to update user');
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to update user');
+      } else {
+        toast.error('Failed to update user');
+      }
     }
   };
 
-  // Handle Delete user
-  const handleDelete = async (userId) => {
+  // Handle Delete user with confirmation and toast notification
+  interface DeleteResponse {
+    message: string;
+  }
+
+  const handleDelete = async (userId: string): Promise<void> => {
     const confirmDelete = window.confirm('Are you sure you want to delete this user?');
 
     if (confirmDelete) {
       try {
-        // Using fetch instead of axios
         const response = await fetch(`http://localhost:5000/api/users/delete/${userId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -103,10 +113,23 @@ const [searchTerm, setSearchTerm] = useState('');
           throw new Error('Failed to delete user');
         }
 
+        const data: DeleteResponse = await response.json();
+
         setUsers(users.filter((user) => user._id !== userId));
-        toast.success('User deleted successfully!');
+        toast.success('User deleted successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       } catch (error) {
-        toast.error('Error deleting user');
+        if (error instanceof Error) {
+          toast.error(error.message || 'Error deleting user');
+        } else {
+          toast.error('Error deleting user');
+        }
       }
     }
   };
@@ -114,13 +137,9 @@ const [searchTerm, setSearchTerm] = useState('');
   // Generate and download PDF report
   const handleDownloadReport = () => {
     try {
-      // Filter users based on search term if any
       const usersToExport = searchTerm ? filteredUsers : users;
-      
-      // Create PDF document in landscape mode
       const doc = new jsPDF('landscape');
       
-      // Report title and metadata
       doc.setFontSize(18);
       doc.setFont("helvetica", "bold");
       doc.text("User Management Report", 15, 20);
@@ -130,18 +149,15 @@ const [searchTerm, setSearchTerm] = useState('');
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 28);
       doc.text(`Total Users: ${usersToExport.length}`, 15, 34);
       
-      // Add simple divider line
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
       doc.line(15, 38, 280, 38);
       
-      // Table setup
       const headers = ["Name", "Email", "Username", "Role"];
       const colPositions = [20, 80, 150, 220];
       const rowHeight = 10;
       let yPos = 50;
       
-      // Table header - simple underlined text
       doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
       headers.forEach((header, i) => {
@@ -151,50 +167,40 @@ const [searchTerm, setSearchTerm] = useState('');
       
       yPos += rowHeight;
       
-      // Table body - clean and simple
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       
       usersToExport.forEach((user, index) => {
-        // Check for page break
         if (yPos > 180) {
           doc.addPage('landscape');
           yPos = 20;
-          
-          // Redraw header on new page
           doc.setFontSize(12);
           doc.setFont("helvetica", "bold");
           headers.forEach((header, i) => {
             doc.text(header, colPositions[i], yPos);
             doc.line(colPositions[i], yPos + 2, colPositions[i] + (i === headers.length - 1 ? 60 : 70), yPos + 2);
           });
-          
           yPos += rowHeight;
           doc.setFontSize(10);
           doc.setFont("helvetica", "normal");
         }
         
-        // User data
         doc.text(user.name || "-", colPositions[0], yPos);
         doc.text(user.email || "-", colPositions[1], yPos);
         doc.text(user.username || "-", colPositions[2], yPos);
         doc.text(user.role || "-", colPositions[3], yPos);
-        
         yPos += rowHeight;
       });
       
-      // Simple footer
       doc.setFontSize(8);
       doc.text("User Management System Report", 15, 200);
-      doc.text(`Page ${doc.internal.getNumberOfPages()}`, 260, 200);
+      doc.text(`Page ${doc.getNumberOfPages()}`, 260, 200);
       
-      // Save PDF
       doc.save(`users_report_${new Date().toISOString().split('T')[0]}.pdf`);
       
       toast.success('PDF report downloaded successfully!');
     } catch (error) {
       toast.error('Error generating PDF report');
-      console.error('Error generating PDF report:', error);
     }
   };
 
@@ -209,15 +215,18 @@ const [searchTerm, setSearchTerm] = useState('');
   });
 
   // Role badge color mapping
-  const getRoleBadgeColor = (role) => {
-    switch (role.toLowerCase()) {
-      case 'admin':
-        return 'bg-purple-100 text-purple-800';
-      case 'manager':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  interface RoleBadgeColorMap {
+    [key: string]: string;
+  }
+
+  const getRoleBadgeColor = (role: string): string => {
+    const roleBadgeColors: RoleBadgeColorMap = {
+      admin: 'bg-purple-100 text-purple-800',
+      manager: 'bg-blue-100 text-blue-800',
+      default: 'bg-gray-100 text-gray-800',
+    };
+
+    return roleBadgeColors[role.toLowerCase()] || roleBadgeColors.default;
   };
 
   if (loading) return (
@@ -237,7 +246,17 @@ const [searchTerm, setSearchTerm] = useState('');
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
@@ -253,17 +272,15 @@ const [searchTerm, setSearchTerm] = useState('');
             >
               <FileText className="h-5 w-5 mr-2" />
               Download PDF Report
-
             </button>
             
             <button
-      onClick={() => navigate('/add-user')} // Navigate to AddUsersPage
-      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
-    >
-      <UserPlus className="h-5 w-5 mr-2" />
-      Add New User
-    </button>
-
+              onClick={() => navigate('/add-user')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+            >
+              <UserPlus className="h-5 w-5 mr-2" />
+              Add New User
+            </button>
           </div>
         </div>
         
@@ -407,7 +424,7 @@ const [searchTerm, setSearchTerm] = useState('');
                 <input
                   type="text"
                   name="name"
-                  value={editUser.name}
+                  value={editUser?.name || ''}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -418,7 +435,7 @@ const [searchTerm, setSearchTerm] = useState('');
                 <input
                   type="email"
                   name="email"
-                  value={editUser.email}
+                  value={editUser?.email || ''}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -429,7 +446,7 @@ const [searchTerm, setSearchTerm] = useState('');
                 <input
                   type="text"
                   name="username"
-                  value={editUser.username}
+                  value={editUser?.username || ''}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -439,13 +456,13 @@ const [searchTerm, setSearchTerm] = useState('');
                 <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                 <select
                   name="role"
-                  value={editUser.role}
+                  value={editUser?.role || ''}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="user">Staff</option>
-                  <option value="admin">Admin</option>
-                  <option value="manager">Manager</option>
+                  <option value="Staff">Staff</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Manager">Manager</option>
                 </select>
               </div>
 
