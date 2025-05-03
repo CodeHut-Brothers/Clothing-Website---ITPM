@@ -135,75 +135,134 @@ const ViewUsersPage = () => {
   };
 
   // Generate and download PDF report
-  const handleDownloadReport = () => {
-    try {
-      const usersToExport = searchTerm ? filteredUsers : users;
-      const doc = new jsPDF('landscape');
+// Add this inside your component, before the handleDownloadReport function
+const getRoleColor = (role: string): [number, number, number] => {
+  switch (role.toLowerCase()) {
+    case 'admin': return [103, 58, 183]; // Purple
+    case 'manager': return [33, 150, 243]; // Blue
+    default: return [158, 158, 158]; // Gray
+  }
+};
+
+// Then update your handleDownloadReport function like this:
+const handleDownloadReport = () => {
+  try {
+    const usersToExport = searchTerm ? filteredUsers : users;
+    const doc = new jsPDF('landscape');
+    
+    // Title and metadata
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(40, 53, 147); // Dark blue color
+    doc.text("User Management System Report", 105, 20, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 30);
+    doc.text(`Total Users: ${usersToExport.length}`, 15, 36);
+    doc.text(`Filtered by: ${searchTerm || 'All users'}`, 15, 42);
+    
+    // Header separator
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(15, 45, 280, 45);
+    
+    // Table headers
+    const headers = ["No.", "Name", "Email", "Username", "Role"];
+    const colPositions = [20, 40, 80, 150, 220];
+    const rowHeight = 10;
+    let yPos = 55;
+    
+    // Header row
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(40, 53, 147);
+    headers.forEach((header, i) => {
+      doc.text(header, colPositions[i], yPos);
+    });
+    
+    // Header underline
+    doc.setDrawColor(40, 53, 147);
+    doc.setLineWidth(0.3);
+    doc.line(15, yPos + 2, 280, yPos + 2);
+    yPos += rowHeight;
+    
+    // Table content
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(80, 80, 80);
+    
+    usersToExport.forEach((user, index) => {
+      if (yPos > 180) {
+        doc.addPage('landscape');
+        yPos = 20;
+        
+        // Repeat header on new page
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(40, 53, 147);
+        headers.forEach((header, i) => {
+          doc.text(header, colPositions[i], yPos);
+        });
+        doc.line(15, yPos + 2, 280, yPos + 2);
+        yPos += rowHeight;
+        
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(80, 80, 80);
+      }
       
-      doc.setFontSize(18);
+      // Row number
+      doc.text((index + 1).toString(), colPositions[0], yPos);
+      
+      // Name (bold)
       doc.setFont("helvetica", "bold");
-      doc.text("User Management Report", 15, 20);
-      
-      doc.setFontSize(10);
+      doc.text(user.name || "-", colPositions[1], yPos);
       doc.setFont("helvetica", "normal");
-      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 28);
-      doc.text(`Total Users: ${usersToExport.length}`, 15, 34);
       
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      doc.line(15, 38, 280, 38);
+      // Email
+      doc.text(user.email || "-", colPositions[2], yPos);
       
-      const headers = ["Name", "Email", "Username", "Role"];
-      const colPositions = [20, 80, 150, 220];
-      const rowHeight = 10;
-      let yPos = 50;
+      // Username
+      doc.text(user.username || "-", colPositions[3], yPos);
       
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "bold");
-      headers.forEach((header, i) => {
-        doc.text(header, colPositions[i], yPos);
-        doc.line(colPositions[i], yPos + 2, colPositions[i] + (i === headers.length - 1 ? 60 : 70), yPos + 2);
-      });
+      // Role with colored background
+      const role = user.role || "-";
+      const roleWidth = doc.getStringUnitWidth(role) * doc.getFontSize() / doc.internal.scaleFactor;
+      const [r, g, b] = getRoleColor(user.role);
+      doc.setFillColor(r, g, b);
+      doc.roundedRect(colPositions[4], yPos - 3, roleWidth + 4, 6, 1, 1, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.text(role, colPositions[4] + 2, yPos);
+      doc.setTextColor(80, 80, 80);
       
       yPos += rowHeight;
       
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
-      
-      usersToExport.forEach((user, index) => {
-        if (yPos > 180) {
-          doc.addPage('landscape');
-          yPos = 20;
-          doc.setFontSize(12);
-          doc.setFont("helvetica", "bold");
-          headers.forEach((header, i) => {
-            doc.text(header, colPositions[i], yPos);
-            doc.line(colPositions[i], yPos + 2, colPositions[i] + (i === headers.length - 1 ? 60 : 70), yPos + 2);
-          });
-          yPos += rowHeight;
-          doc.setFontSize(10);
-          doc.setFont("helvetica", "normal");
-        }
-        
-        doc.text(user.name || "-", colPositions[0], yPos);
-        doc.text(user.email || "-", colPositions[1], yPos);
-        doc.text(user.username || "-", colPositions[2], yPos);
-        doc.text(user.role || "-", colPositions[3], yPos);
-        yPos += rowHeight;
-      });
-      
-      doc.setFontSize(8);
-      doc.text("User Management System Report", 15, 200);
-      doc.text(`Page ${doc.getNumberOfPages()}`, 260, 200);
-      
-      doc.save(`users_report_${new Date().toISOString().split('T')[0]}.pdf`);
-      
-      toast.success('PDF report downloaded successfully!');
-    } catch (error) {
-      toast.error('Error generating PDF report');
-    }
-  };
-
+      // Add subtle row separator
+      if (index < usersToExport.length - 1) {
+        doc.setDrawColor(240, 240, 240);
+        doc.setLineWidth(0.1);
+        doc.line(15, yPos - 1, 280, yPos - 1);
+      }
+    });
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text("Confidential - User Management System", 15, 200);
+    doc.text(`Page ${doc.getNumberOfPages()}`, 260, 200);
+    
+    // Save the PDF
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    doc.save(`User_Report_${timestamp}.pdf`);
+    
+    toast.success('PDF report generated successfully!');
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    toast.error('Error generating PDF report');
+  }
+};
   // Filter users based on search term
   const filteredUsers = users.filter((user) => {
     const lowercasedSearchTerm = searchTerm.toLowerCase();
