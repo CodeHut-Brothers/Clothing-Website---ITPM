@@ -4,7 +4,8 @@ import ProductCard from '../components/ProductCard';
 import { Search, Filter, X, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Category = 'all' | 'mens' | 'womens' | 'caps' | 'bags' | 'shoes' | 'unisex';
+type Category = 'all' | 'mens' | 'womens' | 'unisex' | 'caps' | 'bags' | 'shoes';
+type Subcategory = string;
 
 interface Product {
   id: string;
@@ -12,7 +13,7 @@ interface Product {
   price: number;
   colors: string[];
   sizes: string[];
-  category: Category;
+  category: Category | Subcategory;
   status: 'available' | 'low-stock' | 'sold-out';
   images: string[];
 }
@@ -21,11 +22,11 @@ export default function Store() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Sample featured products from your image URLs
+
   const featuredImages = [
     "https://i.ibb.co/QJM0TMP/DSC07607.png",
     "https://i.ibb.co/HCjwQzC/DSC07612.png",
@@ -33,7 +34,16 @@ export default function Store() {
     "https://i.ibb.co/2Ff35RM/DSC07632.png"
   ];
 
-  // Fetch products from the backend
+  const subcategoriesMap: Record<Category, Subcategory[]> = {
+    mens: ['tshirt', 'polo_tshirt', 'hoodie', 'pants'],
+    womens: ['skirt'],
+    unisex: ['tshirt', 'polo_tshirt', 'hoodie', 'pants', 'skirt'],
+    caps: [],
+    bags: [],
+    shoes: [],
+    all: []
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -45,39 +55,33 @@ export default function Store() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory || subcategoriesMap[selectedCategory]?.includes(product.category);
+    const matchesSubcategory = !selectedSubcategory || product.category === selectedSubcategory;
+    return matchesSearch && matchesCategory && matchesSubcategory;
   });
 
   const sortedProducts = filteredProducts.sort((a, b) => b.id.localeCompare(a.id));
 
-  const categories: Category[] = ['all', 'mens', 'womens', 'caps', 'bags', 'shoes', 'unisex'];
+  const categories: Category[] = ['all', 'mens', 'womens', 'unisex', 'caps', 'backpack', 'shoes'];
 
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
         <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         >
           <ShoppingBag size={48} className="text-black" />
         </motion.div>
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
@@ -98,7 +102,7 @@ export default function Store() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero section with featured products */}
+      {/* Hero Section */}
       <div className="w-full bg-gradient-to-r from-gray-900 to-black text-white">
         <div className="max-w-7xl mx-auto px-4 py-16">
           <motion.div 
@@ -112,7 +116,7 @@ export default function Store() {
               Explore our latest collection of premium fashion items
             </p>
           </motion.div>
-          
+
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -136,7 +140,7 @@ export default function Store() {
         </div>
       </div>
 
-      {/* Main products section */}
+      {/* Product Filter */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <motion.div
           initial={{ opacity: 0 }}
@@ -163,35 +167,61 @@ export default function Store() {
               <Filter size={18} />
               <span>Filter</span>
             </button>
-            
-            {showFilters && (
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="flex gap-2 overflow-x-auto py-2"
-              >
-                {categories.map((category) => (
-                  <motion.button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors
-                      ${selectedCategory === category
-                        ? 'bg-black text-white shadow-md'
-                        : 'bg-white hover:bg-gray-100 border border-gray-200'
-                      }`}
-                  >
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </motion.button>
-                ))}
-              </motion.div>
-            )}
           </div>
         </motion.div>
 
-        {/* Products Grid */}
+        {showFilters && (
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="flex flex-wrap gap-2 mb-4"
+          >
+            {categories.map((category) => (
+              <motion.button
+                key={category}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setSelectedSubcategory(null);
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors whitespace-nowrap
+                  ${selectedCategory === category
+                    ? 'bg-black text-white shadow-md'
+                    : 'bg-white hover:bg-gray-100 border border-gray-200'
+                  }`}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Subcategory Filter */}
+        {subcategoriesMap[selectedCategory]?.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-wrap gap-2 mb-6"
+          >
+            {subcategoriesMap[selectedCategory].map((subcat) => (
+              <button
+                key={subcat}
+                onClick={() => setSelectedSubcategory(subcat)}
+                className={`px-3 py-2 rounded-lg text-sm capitalize border transition
+                  ${selectedSubcategory === subcat
+                    ? 'bg-black text-white'
+                    : 'bg-white border-gray-300 hover:bg-gray-100'
+                  }`}
+              >
+                {subcat.replace('_', ' ')}
+              </button>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Product Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -216,17 +246,17 @@ export default function Store() {
               ))}
             </div>
           </AnimatePresence>
+
+          {sortedProducts.length === 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16"
+            >
+              <p className="text-gray-500 text-lg">No products found matching your criteria</p>
+            </motion.div>
+          )}
         </motion.div>
-        
-        {sortedProducts.length === 0 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <p className="text-gray-500 text-lg">No products found matching your criteria</p>
-          </motion.div>
-        )}
       </div>
     </div>
   );
