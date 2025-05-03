@@ -126,7 +126,7 @@ const ProductCard = ({ product, index }) => {
         <h3 className="text-lg font-semibold">{product.name}</h3>
         <p className="text-sm text-gray-200 mb-2">{product.description.substring(0, 60)}...</p>
         <div className="flex justify-between items-center">
-          <p className="font-bold text-xl">${product.price.toFixed(2)}</p>
+          <p className="font-bold text-xl">LKR {product.price.toFixed(2)}</p>
           <button className="p-2 bg-white text-black rounded-full hover:bg-black hover:text-white transition-colors">
             <ShoppingBag className="w-5 h-5" />
           </button>
@@ -135,7 +135,7 @@ const ProductCard = ({ product, index }) => {
       
       <div className="bg-white p-4">
         <h3 className="text-lg font-semibold">{product.name}</h3>
-        <p className="text-gray-600 font-medium">${product.price.toFixed(2)}</p>
+        <p className="text-gray-600 font-medium">LKR {product.price.toFixed(2)}</p>
       </div>
     </div>
   );
