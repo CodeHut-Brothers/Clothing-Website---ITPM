@@ -172,6 +172,44 @@ const AIItemFinder = () => {
     const files = e.dataTransfer.files;
     handleFileSelect(files);
   };
+
+  const handlePaste = (e) => {
+    if (e.clipboardData && e.clipboardData.items) {
+      const items = e.clipboardData.items;
+      
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const file = items[i].getAsFile();
+          
+          if (file) {
+            // Show success notification
+            const notificationElement = document.createElement('div');
+            notificationElement.className = 'fixed top-4 right-4 bg-black text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center';
+            notificationElement.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Image pasted successfully!';
+            document.body.appendChild(notificationElement);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+              document.body.removeChild(notificationElement);
+            }, 3000);
+            
+            handleFileSelect([file]);
+            break;
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const pasteListener = (e) => handlePaste(e);
+    window.addEventListener('paste', pasteListener);
+  
+    return () => {
+      window.removeEventListener('paste', pasteListener);
+    };
+  }, []);
+  
   
   const handleDragOver = (e) => {
     e.preventDefault();
