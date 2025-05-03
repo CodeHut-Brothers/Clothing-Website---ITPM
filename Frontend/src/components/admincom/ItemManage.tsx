@@ -30,10 +30,21 @@ const ItemManage = () => {
   const [refresh, setRefresh] = useState(false);
   const [activeTab, setActiveTab] = useState('basics'); // For form tabs
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchItems();
   }, [refresh]);
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    const numberValue = parseFloat(value);
+
+    if (value === "" || isNaN(numberValue) || numberValue <= 0) {
+      setError("💡 Please enter a valid price number (greater than 0)");
+    } else {
+      setError("");
+    }setFormData({ ...formData, price: value });}
 
   // Effect to handle filtering when items or search term changes
   useEffect(() => {
@@ -326,14 +337,23 @@ const ItemManage = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Price (LKR)</label>
-                        <input
-                          type="number"
-                          value={formData.price}
-                          onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                          placeholder="Enter price"
-                          required
-                        />
+                        <div className="w-full">
+      <input
+        type="number"
+        value={formData.price}
+        onChange={handleChange}
+        className={`w-full p-3 bg-gray-50 border ${
+          error ? "border-red-400" : "border-gray-200"
+        } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all`}
+        placeholder="Enter price"
+        required
+      />
+      {error && (
+        <p className="mt-2 text-sm text-red-500 animate-pulse">
+          {error}
+        </p>
+      )}
+    </div>
                       </div>
                       <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
