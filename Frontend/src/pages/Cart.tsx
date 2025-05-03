@@ -2,23 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import Confirmation from './Confirmation';
 import axios from 'axios';
-import { CheckCircle } from 'lucide-react'; // Import the check icon
+import { CheckCircle } from 'lucide-react';
 
 export default function Cart() {
   const { state, dispatch } = useCart();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false); // Control modal visibility
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // Control success popup visibility
+  const [showModal, setShowModal] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone1: '',
     phone2: '',
     address: '',
   });
+  const [formErrors, setFormErrors] = useState({
+    name: '',
+    phone1: '',
+    phone2: '',
+    address: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const total = cartItems.reduce((sum, item) => {
@@ -50,56 +56,116 @@ export default function Cart() {
     fetchCartItems();
   }, [state.items]);
 
-  if (loading) {
-    return <p>Loading cart...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
-  const handleCheckout = () => {
-    setShowModal(true); // Show the modal on checkout button click
+  const validateField = (name, value) => {
+    let error = '';
+    
+    switch (name) {
+      case 'name':
+        if (!value.trim()) error = 'Name is required';
+        else if (value.length < 3) error = 'Name must be at least 3 characters';
+        break;
+      case 'phone1':
+        if (!value) error = 'Primary phone is required';
+        else if (!/^\d{10}$/.test(value)) error = 'Phone must be exactly 10 digits';
+        break;
+      case 'phone2':
+        if (value && !/^\d{10}$/.test(value)) error = 'Phone must be exactly 10 digits';
+        break;
+      case 'address':
+        if (!value.trim()) error = 'Address is required';
+        else if (value.length < 10) error = 'Address must be at least 10 characters';
+        break;
+      default:
+        break;
+    }
+    
+    return error;
   };
 
   const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    
+    // For phone fields, only allow numbers and limit to 10 digits
+    if (name === 'phone1' || name === 'phone2') {
+      if (value && !/^\d*$/.test(value)) return; // Only allow numbers
+      if (value.length > 10) return; // Limit to 10 digits
+    }
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    
+    // Validate the field and update errors
+    setFormErrors({
+      ...formErrors,
+      [name]: validateField(name, value)
+    });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+    
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, formData[key]);
+      newErrors[key] = error;
+      if (error) isValid = false;
+    });
+    
+    setFormErrors(newErrors);
+    return isValid;
+  };
+
+  const handleCheckout = () => {
+    setShowModal(true);
+    setError(null);
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const orderData = {
-      ...formData,
-      cartItems: cartItems.map((item) => ({
-        productName: item.product?.name,
-        quantity: item.quantity,
-        color: item.product?.color || 'N/A',
-        price: item.product?.price,
-      })),
-      totalAmount: total,
-    };
-
+    setIsSubmitting(true);
+    
+    // Validate all fields before submission
+    const isValid = validateForm();
+    
+    if (!isValid) {
+      setIsSubmitting(false);
+      setError('Please fix the errors in the form');
+      return;
+    }
+    
     try {
+      const orderData = {
+        ...formData,
+        cartItems: cartItems.map((item) => ({
+          productName: item.product?.name,
+          quantity: item.quantity,
+          color: item.product?.color || 'N/A',
+          price: item.product?.price,
+        })),
+        totalAmount: total,
+      };
+
       await axios.post('http://localhost:5000/api/orders', orderData);
-      setShowModal(false); // Close the modal after successful order submission
-      setShowSuccessPopup(true); // Show the success popup
-      console.log('Order Data sent successfully');
-      // You can also redirect or navigate after a timeout
+      setShowModal(false);
+      setShowSuccessPopup(true);
+      dispatch({ type: 'CLEAR_CART' });
+      
       setTimeout(() => {
-        navigate('/'); // Redirect to home page
+        navigate('/');
       }, 5000);
     } catch (error) {
       console.error('Error placing order:', error);
-      setError('Failed to place order.');
+      setError('Failed to place order. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleCloseSuccessPopup = () => {
-    setShowSuccessPopup(false); // Close success popup
-    navigate('/'); // Navigate to home page
+    setShowSuccessPopup(false);
+    navigate('/');
   };
 
   const handleClearCart = () => {
@@ -108,8 +174,16 @@ export default function Cart() {
   };
 
   const handleAddMoreItems = () => {
-    navigate('/store'); // Navigate to the store page to add more items
+    navigate('/store');
   };
+
+  if (loading) {
+    return <div className="pt-20 pb-8 text-center">Loading cart...</div>;
+  }
+
+  if (error && !showModal) {
+    return <div className="pt-20 pb-8 text-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="pt-20 pb-8">
@@ -224,7 +298,6 @@ export default function Cart() {
                   Proceed to Checkout
                 </button>
 
-                {/* Additional Buttons */}
                 <div className="mt-4 space-y-2">
                   <button
                     onClick={handleAddMoreItems}
@@ -246,58 +319,81 @@ export default function Cart() {
 
         {/* Modal for user input */}
         {showModal && (
-          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
               <h2 className="text-xl font-semibold mb-4">Enter Your Details</h2>
+              {error && <p className="text-red-500 mb-4">{error}</p>}
               <form onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleFormChange}
-                    placeholder="Full Name"
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="phone1"
-                    value={formData.phone1}
-                    onChange={handleFormChange}
-                    placeholder="Phone Number 1"
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="phone2"
-                    value={formData.phone2}
-                    onChange={handleFormChange}
-                    placeholder="Phone Number 2 (optional)"
-                    className="w-full p-2 border rounded"
-                  />
-                  <textarea
-                    name="address"
-                    value={formData.address}
-                    onChange={handleFormChange}
-                    placeholder="Address"
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                  <div className="flex justify-between">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Full Name*</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleFormChange}
+                      placeholder="Enter your full name"
+                      className={`w-full p-2 border rounded ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
+                    />
+                    {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Primary Phone*</label>
+                    <input
+                      type="tel"
+                      name="phone1"
+                      value={formData.phone1}
+                      onChange={handleFormChange}
+                      placeholder="Enter 10-digit phone number"
+                      maxLength="10"
+                      className={`w-full p-2 border rounded ${formErrors.phone1 ? 'border-red-500' : 'border-gray-300'}`}
+                    />
+                    {formErrors.phone1 && <p className="text-red-500 text-xs mt-1">{formErrors.phone1}</p>}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Secondary Phone</label>
+                    <input
+                      type="tel"
+                      name="phone2"
+                      value={formData.phone2}
+                      onChange={handleFormChange}
+                      placeholder="Optional 10-digit phone number"
+                      maxLength="10"
+                      className={`w-full p-2 border rounded ${formErrors.phone2 ? 'border-red-500' : 'border-gray-300'}`}
+                    />
+                    {formErrors.phone2 && <p className="text-red-500 text-xs mt-1">{formErrors.phone2}</p>}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Address*</label>
+                    <textarea
+                      name="address"
+                      value={formData.address}
+                      onChange={handleFormChange}
+                      placeholder="Enter your full address"
+                      rows="3"
+                      className={`w-full p-2 border rounded ${formErrors.address ? 'border-red-500' : 'border-gray-300'}`}
+                    />
+                    {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
+                  </div>
+                  
+                  <div className="flex justify-between pt-2">
                     <button
                       type="button"
                       onClick={() => setShowModal(false)}
-                      className="bg-gray-500 text-white py-2 px-6 rounded-full"
+                      className="bg-gray-500 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors"
+                      disabled={isSubmitting}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="bg-black text-white py-2 px-6 rounded-full"
+                      className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
+                      disabled={isSubmitting}
                     >
-                      Submit Order
+                      {isSubmitting ? 'Processing...' : 'Submit Order'}
                     </button>
                   </div>
                 </div>
@@ -308,8 +404,8 @@ export default function Cart() {
 
         {/* Success Popup */}
         {showSuccessPopup && (
-          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-center">
+          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 text-center">
               <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-4">Your order was confirmed successfully!</h2>
               <p className="text-gray-600 mb-4">
@@ -318,13 +414,13 @@ export default function Cart() {
               <div className="flex justify-center gap-4">
                 <button
                   onClick={() => navigate('/')}
-                  className="bg-black text-white py-2 px-6 rounded-full"
+                  className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
                 >
                   Home Page
                 </button>
                 <button
                   onClick={() => navigate('/contact-us')}
-                  className="bg-black text-white py-2 px-6 rounded-full"
+                  className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
                 >
                   Contact Us
                 </button>
