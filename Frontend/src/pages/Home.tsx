@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, ShoppingBag, Star, ChevronRight, ChevronLeft, Instagram, Twitter, Facebook } from 'lucide-react';
 import axios from 'axios';
+import CategoryShowcase from '../components/CategoryShowcase';
 import Scrolling from '../components/Scrollimg';
+import Featuredcollection from '../components/FeaturedCollection'
+import MiniStore from '../components/MiniStore'
 
 // Animation helpers
 const useIntersectionObserver = (options = {}) => {
@@ -514,36 +517,33 @@ export default function Home() {
   const productsToDisplay = loading || error ? fallbackProducts : featuredProducts;
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden centre">
       {/* Hero Section */}
       <Hero />
       
-      {/* Featured Collection */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Collection</h2>
-            <div className="w-24 h-1 bg-black mx-auto"></div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {productsToDisplay.slice(0, 3).map((product, index) => (
-              <ProductCard key={product._id} product={product} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
       
-      {/* Fashion Gallery */}
-      <Scrolling/>
-      <FashionGallery />
+
+
+      <Featuredcollection />
+
+      
+
+
+
+
+      <CategoryShowcase />
+
+      <MiniStore/>
+      
+     
+      
       
       {/* Brand Philosophy */}
       <BrandPhilosophy />
       
       
       {/* Customer Reviews */}
-      <Reviews />
+   
       
       {/* Newsletter Sign Up */}
       <Newsletter />

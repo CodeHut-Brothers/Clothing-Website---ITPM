@@ -20,7 +20,7 @@ export default function Navbar() {
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex space-x-8">
               <Link to="/" className="hover:text-gray-300 transition-colors">Home</Link>
-              <Link to="/store" className="hover:text-gray-300 transition-colors">Store</Link>
+              <Link to="/store" className="hover:text-gray-300 transition-colors">Shop</Link>
               <Link to="/fashiongallery" className="hover:text-gray-300 transition-colors">Gallery</Link>
               <Link to="/ai-item-finder" className="hover:text-gray-300 transition-colors flex items-center gap-1">
                 <Sparkles className="w-4 h-4" /> AI Finder
@@ -46,7 +46,7 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-black/80 text-white px-4 py-2 space-y-4">
           <Link to="/" className="block hover:text-gray-300 transition-colors">Home</Link>
-          <Link to="/store" className="block hover:text-gray-300 transition-colors">Store</Link>
+          <Link to="/store" className="block hover:text-gray-300 transition-colors">Shop</Link>
           <Link to="/fashiongallery" className="block hover:text-gray-300 transition-colors">Gallery</Link>
           <Link to="/ai-item-finder" className="block hover:text-gray-300 transition-colors">AI Item Finder</Link>
           <Link to="/about" className="block hover:text-gray-300 transition-colors">About</Link>

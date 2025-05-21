@@ -103,42 +103,7 @@ export default function Store() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="w-full bg-gradient-to-r from-gray-900 to-black text-white">
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-8"
-          >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">Discover Your Style</h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Explore our latest collection of premium fashion items
-            </p>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12"
-          >
-            {featuredImages.map((img, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                className="relative overflow-hidden rounded-lg aspect-square"
-              >
-                <img 
-                  src={img} 
-                  alt="Featured product" 
-                  className="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-110"
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </div>
+      
 
       {/* Product Filter */}
       <div className="max-w-7xl mx-auto px-4 py-12">

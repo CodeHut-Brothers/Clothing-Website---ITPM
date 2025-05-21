@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -14,6 +14,7 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   // Fetch product details from the API
   useEffect(() => {
@@ -52,6 +53,14 @@ export default function ProductDetail() {
       },
     });
     navigate('/cart');
+  };
+
+  const sizeChartData = {
+    "S": { chest: "34-36", waist: "28-30", hip: "34-36" },
+    "M": { chest: "38-40", waist: "32-34", hip: "38-40" },
+    "L": { chest: "42-44", waist: "36-38", hip: "42-44" },
+    "XL": { chest: "46-48", waist: "40-42", hip: "46-48" },
+    "XXL": { chest: "50-52", waist: "44-46", hip: "50-52" }
   };
 
   return (
@@ -96,7 +105,15 @@ export default function ProductDetail() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-medium text-gray-900 mb-2">Size</h3>
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-sm font-medium text-gray-900">Size</h3>
+                  <button 
+                    onClick={() => setShowSizeChart(true)}
+                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Show Size Chart
+                  </button>
+                </div>
                 <div className="flex gap-2">
                   {product.sizes.map(size => (
                     <button
@@ -145,6 +162,11 @@ export default function ProductDetail() {
                     </option>
                   ))}
                 </select>
+                <p className="text-sm text-gray-500 mt-2">
+                  {quantity > 1 
+                    ? `You're purchasing ${quantity} items for a total of LKR ${product.price * quantity}`
+                    : 'Select the quantity you wish to purchase'}
+                </p>
               </div>
               
               <button
@@ -162,6 +184,57 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* Size Chart Modal */}
+      {showSizeChart && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-lg w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Size Chart</h2>
+              <button 
+                onClick={() => setShowSizeChart(false)}
+                className="p-1 rounded-full hover:bg-gray-100"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="p-2 text-left border">Size</th>
+                    <th className="p-2 text-left border">Chest (inches)</th>
+                    <th className="p-2 text-left border">Waist (inches)</th>
+                    <th className="p-2 text-left border">Hip (inches)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(sizeChartData).map(([size, measurements]) => (
+                    <tr key={size} className="hover:bg-gray-50">
+                      <td className="p-2 border font-medium">{size}</td>
+                      <td className="p-2 border">{measurements.chest}</td>
+                      <td className="p-2 border">{measurements.waist}</td>
+                      <td className="p-2 border">{measurements.hip}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="mt-4 text-sm text-gray-600">
+              <p>Measurements are approximate. For the best fit, we recommend taking your own measurements and comparing them to the chart.</p>
+            </div>
+            
+            <button
+              onClick={() => setShowSizeChart(false)}
+              className="mt-4 w-full py-2 bg-black text-white rounded-full hover:bg-gray-800"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
