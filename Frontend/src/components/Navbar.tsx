@@ -22,9 +22,7 @@ export default function Navbar() {
               <Link to="/" className="hover:text-gray-300 transition-colors">Home</Link>
               <Link to="/store" className="hover:text-gray-300 transition-colors">Shop</Link>
               <Link to="/fashiongallery" className="hover:text-gray-300 transition-colors">Gallery</Link>
-              <Link to="/ai-item-finder" className="hover:text-gray-300 transition-colors flex items-center gap-1">
-                <Sparkles className="w-4 h-4" /> AI Finder
-              </Link>
+             
               <Link to="/about" className="hover:text-gray-300 transition-colors">About</Link>
               <Link to="/contact" className="hover:text-gray-300 transition-colors">Contact</Link>
             </div>
@@ -48,7 +46,7 @@ export default function Navbar() {
           <Link to="/" className="block hover:text-gray-300 transition-colors">Home</Link>
           <Link to="/store" className="block hover:text-gray-300 transition-colors">Shop</Link>
           <Link to="/fashiongallery" className="block hover:text-gray-300 transition-colors">Gallery</Link>
-          <Link to="/ai-item-finder" className="block hover:text-gray-300 transition-colors">AI Item Finder</Link>
+          
           <Link to="/about" className="block hover:text-gray-300 transition-colors">About</Link>
           <Link to="/contact" className="block hover:text-gray-300 transition-colors">Contact</Link>
         </div>

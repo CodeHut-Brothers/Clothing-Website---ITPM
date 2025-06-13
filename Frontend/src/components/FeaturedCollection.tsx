@@ -68,7 +68,7 @@ const FeaturedCollection: React.FC = () => {
     <section className="py-12 bg-gray-50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-3">Featured Collection</h2>
+          <h2 className="text-3xl font-bold mb-3 ">Featured Collection</h2>
           
         </div>
 

@@ -24,7 +24,7 @@ export default function FashionGallery() {
           {Photolink.map((image, index) => (
             <div
               key={index}
-              className="w-full h-60 bg-gray-200 rounded-lg shadow-lg overflow-hidden"
+              className="w-full h-full bg-gray-200 rounded-lg shadow-lg overflow-hidden"
             >
               <img
                 src={image}
@@ -42,7 +42,7 @@ export default function FashionGallery() {
           {Photolink.map((image, index) => (
             <div
               key={index}
-              className="w-full h-60 bg-gray-200 rounded-lg shadow-lg overflow-hidden"
+              className="w-full h-full bg-gray-200 rounded-lg shadow-lg overflow-hidden"
             >
               <img
                 src={image}

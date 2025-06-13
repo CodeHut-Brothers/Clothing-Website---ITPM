@@ -6,6 +6,7 @@ import CategoryShowcase from '../components/CategoryShowcase';
 import Scrolling from '../components/Scrollimg';
 import Featuredcollection from '../components/FeaturedCollection'
 import MiniStore from '../components/MiniStore'
+import Footer from '../components/Footer';
 
 // Animation helpers
 const useIntersectionObserver = (options = {}) => {
@@ -79,15 +80,7 @@ const Hero = () => {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
 
-            <Link
-              to="/ai-item-finder"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-blue-500
-                hover:from-purple-600 hover:to-blue-600 text-white px-8 py-3 rounded-full
-                transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              <Sparkles className="w-5 h-5 animate-pulse" />
-              AI Item Finder
-            </Link>
+            
           </div>
         </div>
       </div>
@@ -526,27 +519,12 @@ export default function Home() {
 
       <Featuredcollection />
 
-      
-
-
-
 
       <CategoryShowcase />
 
       <MiniStore/>
-      
-     
-      
-      
-      {/* Brand Philosophy */}
-      <BrandPhilosophy />
-      
-      
-      {/* Customer Reviews */}
-   
-      
-      {/* Newsletter Sign Up */}
       <Newsletter />
+      <Footer />
     </div>
   );
 }
