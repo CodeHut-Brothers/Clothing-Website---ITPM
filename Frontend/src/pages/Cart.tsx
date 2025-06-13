@@ -301,7 +301,7 @@ export default function Cart() {
                 <div className="mt-4 space-y-2">
                   <button
                     onClick={handleAddMoreItems}
-                    className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors"
+                    className="w-full bg-gray-700 text-white py-3 rounded-full hover:bg-gray-00 transition-colors"
                   >
                     Add More Items
                   </button>

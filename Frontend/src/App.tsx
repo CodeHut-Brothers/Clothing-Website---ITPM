@@ -18,7 +18,7 @@ import OrderEditPage from "./components/admincom/OrderEditPage";
 import AIItemFinder from './pages/AIItemFinder';
 import AddUsersPage from './components/admincom/AddUserComponent';
 import AddUserComponent from './components/admincom/AddUserComponent';
-
+import Footer from '../src/components/Footer';
 
 function App() {
   return (
@@ -27,6 +27,7 @@ function App() {
         <div className="min-h-screen bg-gray-50">
           <Navbar />
           <ChatBot />
+          
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/store" element={<Store />} />
@@ -44,6 +45,7 @@ function App() {
             <Route path="/add-user" element={<AddUsersPage />} />
             <Route path="/admin/dashboard" element={<AddUserComponent/>} />
           </Routes>
+          <Footer />
         </div>
       </Router>
     </CartProvider>

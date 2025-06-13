@@ -13,8 +13,12 @@ export default function Navbar() {
     <nav className="fixed w-full bg-black/95 backdrop-blur-sm text-white z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="text-2xl font-bold tracking-wider">
-            CANNIBAL.CO
+          <Link to="/" className="flex items-center">
+            <img
+              src="https://i.ibb.co/wFwh11s6/cannibal-logo-02.png"
+              alt="CANNIBAL.CO Logo"
+              className="h-auto w-40 object-contain"
+            />
           </Link>
 
           <div className="flex items-center space-x-4">

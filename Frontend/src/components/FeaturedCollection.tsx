@@ -67,11 +67,7 @@ const FeaturedCollection: React.FC = () => {
   return (
     <section className="py-12 bg-gray-50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-3 ">Featured Collection</h2>
-          
-        </div>
-
+        
         {/* Navigation Buttons */}
         <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2 md:flex hidden">
           <button

@@ -54,7 +54,7 @@ const Hero = () => {
         style={{ transform: `translateY(${scrollY * 0.15}px)` }}
       >
         <source
-          src="https://videos.pexels.com/video-files/7677807/7677807-hd_1080_1920_25fps.mp4"
+          src="https://streamable.com/yp4zii"
           type="video/mp4"
         />
       </video>
@@ -66,9 +66,9 @@ const Hero = () => {
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter animate-fadeIn">
             CANNIBAL
           </h1>
-          <p className="text-xl md:text-2xl tracking-wide animate-slideUp">
-            Where bold meets unique. Define your style revolution.
-          </p>
+          <p className="text-xl md:text-2xl font-bold tracking-[0.2em] animate-slideUp font-sans">
+          EVERY STEP, STRONGER
+        </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fadeIn">
             <Link
@@ -516,15 +516,29 @@ export default function Home() {
       
       
 
+      <div className="mt-16 text-center">
+        <h2 className="text-3xl font-bold mb-6">Featured Collections</h2>
+        <Featuredcollection />
+      </div>
+      
+      <CategoryShowcase/>
 
-      <Featuredcollection />
+      
+
+      <div className="w-full my-6">
+      <img
+        src="https://i.ibb.co/HT6r03PL/Whats-App-Image-2025-06-13-at-13-05-02-ca6a2d20.jpg"
+        alt="Promotional Banner"
+        className="w-full h-auto object-cover rounded-lg shadow-md"
+      />
+    </div>
 
 
-      <CategoryShowcase />
-
+      
+      
       <MiniStore/>
       <Newsletter />
-      <Footer />
+      
     </div>
   );
 }

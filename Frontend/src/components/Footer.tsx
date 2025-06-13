@@ -42,7 +42,6 @@ const Footer = () => {
       { name: 'Shipping Info', href: '/shipping' },
       { name: 'Returns', href: '/returns' },
       { name: 'FAQ', href: '/faq' },
-      { name: 'Track Order', href: '/track-order' },
       { name: 'Customer Care', href: '/support' }
     ]
   };

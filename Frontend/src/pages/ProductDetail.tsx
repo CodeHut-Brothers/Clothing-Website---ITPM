@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Featuredcollection from '../components/FeaturedCollection'
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -101,7 +102,6 @@ export default function ProductDetail() {
           <div>
             <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
             <p className="text-2xl font-semibold mb-6">LKR {product.price}</p>
-            <p className="text-gray-600 mb-6">{product.description}</p>
             
             <div className="space-y-6">
               <div>
@@ -180,10 +180,21 @@ export default function ProductDetail() {
               >
                 {product.status === 'sold-out' ? 'Sold Out' : 'Add to Cart'}
               </button>
+
+              {/* Product Description Section - Moved after Add to Cart button */}
+              <div className="pt-4 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Product Description</h3>
+                <div className="text-gray-600 leading-relaxed">
+                  {product.description}
+                </div>
+              </div>
             </div>
           </div>
+          
         </div>
+        <Featuredcollection/>
       </div>
+      
 
       {/* Size Chart Modal */}
       {showSizeChart && (
@@ -236,5 +247,6 @@ export default function ProductDetail() {
         </div>
       )}
     </div>
+    
   );
 }
