@@ -482,32 +482,7 @@ export default function Home() {
     fetchFeaturedProducts();
   }, []);
 
-  // Fallback data in case API fails
-  const fallbackProducts = [
-    {
-      _id: '1',
-      name: 'Minimalist Hoodie',
-      price: 89.99,
-      description: 'Urban style meets comfort with our premium cotton blend hoodie.',
-      images: ['https://i.ibb.co/bBsr0tH/DSC07648.png']
-    },
-    {
-      _id: '2',
-      name: 'Signature Tee',
-      price: 49.99,
-      description: 'Our bestselling signature t-shirt with subtle logo detailing.',
-      images: ['https://i.ibb.co/hWt5Ssc/DSC07653.png']
-    },
-    {
-      _id: '3',
-      name: 'Urban Jacket',
-      price: 129.99,
-      description: 'Weather-resistant jacket designed for city living and beyond.',
-      images: ['https://i.ibb.co/dDN5B2s/DSC07656.png']
-    }
-  ];
-
-  const productsToDisplay = loading || error ? fallbackProducts : featuredProducts;
+  
 
   return (
     <div className="overflow-x-hidden centre">

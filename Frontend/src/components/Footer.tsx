@@ -169,9 +169,14 @@ const Footer = () => {
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-gray-400 text-sm">
               <p>2025 Cannibal. All rights reserved.</p>
               <div className="flex items-center space-x-1">
-                <span>Made with</span>
-                <Heart className="w-4 h-4 text-red-500 fill-current" />
-                <span>in Sri Lanka</span>
+                <span>Product by</span>
+                <a
+                    href="https://www.lexientinnovations.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1 hover:underline"
+                  >
+                <span>Lexient Innovations</span></a>
               </div>
             </div>
             

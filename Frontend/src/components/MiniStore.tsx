@@ -156,7 +156,7 @@ const MiniStore = ({
                 <div className="p-2 sm:p-3">
                   <h3 className="font-medium text-gray-900 text-xs sm:text-sm truncate">{product.name}</h3>
                   <div className="mt-1 flex justify-between items-center">
-                    <p className="font-bold text-gray-900 text-xs sm:text-sm">${product.price.toFixed(2)}</p>
+                    <p className="font-bold text-gray-900 text-xs sm:text-sm">LKR {product.price.toFixed(2)}</p>
                     <p className="text-xs text-gray-500 capitalize hidden sm:block">{product.category}</p>
                   </div>
                 </div>

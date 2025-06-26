@@ -1,10 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+
 const dotenv = require('dotenv');
 
-
-
+const kokoRoutes = require('./routes/kokoRoutes');
 const productRoutes = require('./routes/productRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const photoRoutes = require('./routes/photoRoutes');
@@ -14,6 +15,9 @@ const chatRoutes = require('./routes/chatRoutes');
 
 
 dotenv.config();
+
+require('dotenv').config();
+
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -40,6 +44,7 @@ app.use('/api/photos', photoRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/koko', kokoRoutes);
 
 
 // Start the server
