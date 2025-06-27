@@ -38,7 +38,7 @@ function AppRoutes() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <ChatBot />
+     
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/store" element={<Store />} />

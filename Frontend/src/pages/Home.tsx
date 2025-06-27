@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, ShoppingBag, Star, ChevronRight, ChevronLeft, Instagram, Twitter, Facebook } from 'lucide-react';
+import { ArrowRight, Sparkles, ChevronDown,ShoppingBag, Star, ChevronRight, ChevronLeft, Instagram, Twitter, Facebook } from 'lucide-react';
 import axios from 'axios';
 import CategoryShowcase from '../components/CategoryShowcase';
 import Scrolling from '../components/Scrollimg';
+import video1back from '../data/vid1.mp4';
 import Featuredcollection from '../components/FeaturedCollection'
 import MiniStore from '../components/MiniStore'
 import Footer from '../components/Footer';
@@ -45,52 +46,105 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="relative h-screen overflow-hidden">
+    <section className="relative h-screen overflow-hidden bg-gray-900 visible">
+      {/* Video Background */}
       <video
         autoPlay
         muted
         loop
-        className="absolute inset-0 w-full h-full object-cover scale-105"
-        style={{ transform: `translateY(${scrollY * 0.15}px)` }}
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ 
+          transform: `translateY(${scrollY * 0.1}px) scale(1.05)`,
+          filter: 'brightness(0.6) contrast(1.1)'
+        }}
       >
-        <source
-          src="https://streamable.com/yp4zii"
-          type="video/mp4"
-        />
+        <source src="https://videos.pexels.com/video-files/2297636/2297636-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
-      
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
-      
-      <div className="relative h-full flex items-center justify-center text-white px-4">
-        <div className="text-center space-y-8 max-w-4xl">
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter animate-fadeIn">
-            CANNIBAL
-          </h1>
-          <p className="text-xl md:text-2xl font-bold tracking-[0.2em] animate-slideUp font-sans">
-          EVERY STEP, STRONGER
-        </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fadeIn">
-            <Link
-              to="/store"
-              className="inline-flex items-center gap-2 bg-white text-black px-8 py-3 rounded-full
-                transition-all duration-500 hover:gap-3 group hover:shadow-lg hover:shadow-white/20"
-            >
-              Shop Collection 
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
 
+
+      
+      {/* Professional Overlay */}
+      {/* <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" /> */}
+      
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
+        <img
+          src="https://i.ibb.co/sZHGq3d/heroiew-2.png"
+          alt="Overlay"
+          className="w-full max-w-md sm:max-w-xl md:max-w-full  opacity-80"
+        />
+      </div>
+      {/* Content Container */}
+      <div className="relative h-full flex items-center justify-center px-6 lg:px-8">
+        <div className="text-center max-w-5xl mx-auto">
+          {/* Main Heading */}
+          <div className="mb-8 animate-fadeInUp">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-4 tracking-tight">
+              CANNIBAL
+            </h1>
+            <div className="w-24 h-1 bg-white mx-auto mb-6"></div>
+          </div>
+          
+          {/* Tagline */}
+          <p className="text-lg md:text-xl lg:text-2xl text-gray-100 font-medium tracking-wide mb-12 animate-fadeInUp animation-delay-200">
+            EVERY STEP, STRONGER
+          </p>
+          
+          {/* Call to Action */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fadeInUp animation-delay-400">
+            <button className="group relative px-8 py-4 bg-white text-black font-semibold rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20">
+              <span className="relative z-10 flex items-center gap-3">
+                Shop Collection
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
             
+            <button className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg transition-all duration-300 hover:bg-white hover:text-black hover:scale-105">
+              Learn More
+            </button>
           </div>
         </div>
       </div>
       
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center animate-bounce">
-        <div className="w-8 h-12 border-2 border-white rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-scroll"></div>
+      {/* Professional Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="flex flex-col items-center text-white/80">
+          <span className="text-sm font-medium mb-2 tracking-wider">SCROLL</span>
+          <div className="w-px h-8 bg-white/60"></div>
+          <ChevronDown className="w-6 h-6 mt-1" />
         </div>
       </div>
-    </div>
+      
+      {/* Custom Styles */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fadeInUp {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .animation-delay-200 {
+          animation-delay: 0.2s;
+          opacity: 0;
+        }
+        
+        .animation-delay-400 {
+          animation-delay: 0.4s;
+          opacity: 0;
+        }
+      `}</style>
+    </section>
   );
 };
 
