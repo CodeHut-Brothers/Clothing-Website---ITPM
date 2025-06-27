@@ -8,6 +8,7 @@ import video1back from '../data/vid1.mp4';
 import Featuredcollection from '../components/FeaturedCollection'
 import MiniStore from '../components/MiniStore'
 import Footer from '../components/Footer';
+import Heronew from '../components/Hero';
 
 // Animation helpers
 const useIntersectionObserver = (options = {}) => {
@@ -59,7 +60,7 @@ const Hero = () => {
           filter: 'brightness(0.6) contrast(1.1)'
         }}
       >
-        <source src="https://videos.pexels.com/video-files/2297636/2297636-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+        <source src="https://videos.pexels.com/video-files/3611029/3611029-hd_1920_1080_24fps.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
@@ -147,6 +148,76 @@ const Hero = () => {
     </section>
   );
 };
+
+
+
+
+const Newcollection = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <section className="relative h-96 overflow-hidden flex justify-start py-16 ">
+    {/* Background Video */}
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="absolute inset-0 w-full h-screen object-cover z-0"
+      style={{
+        transform: `translateY(${scrollY * 0.1}px) scale(2.05)`,
+        filter: 'brightness(0.6) contrast(1.1)'
+      }}
+    >
+      <source src="https://videos.pexels.com/video-files/16296848/16296848-uhd_2560_1440_24fps.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    {/* Overlay Content */}
+    <div className="relative z-10 w-full px-6 md:px-20 flex flex-col lg:flex-row items-center justify-between">
+      {/* Text Section */}
+      <div className="text-white max-w-xl text-center lg:text-left space-y-6">
+        <p className="text-sm uppercase tracking-widest text-gray-300">Shop the</p>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
+          AFTERLIFE<br />COLLECTION
+        </h1>
+        <button className="inline-block bg-white text-black font-semibold py-3 px-6 rounded-full shadow-md hover:scale-105 transition-transform">
+          Shop By Category
+        </button>
+      </div>
+
+      {/* Image Section */}
+      <div className="mt-10 max-w-2xl h-20">
+        <img
+          src="https://i.ibb.co/mCR4qSww/temp-t.png"
+          alt="Afterlife Collection T-shirts"
+          className="w-full h-auto object-contain ml-20 "
+        /></div>
+        <div className="mt-10 max-w-2xl h-25">
+        <img
+          src="https://i.ibb.co/mCR4qSww/temp-t.png"
+          alt="Afterlife Collection T-shirts2"
+          className="w-full h-auto object-contain ml-50"
+        />
+      </div>
+    </div>
+  </section>
+);
+
+
+};
+
+
+
+
 
 // Product Card with hover effects
 const ProductCard = ({ product, index }) => {
@@ -541,7 +612,8 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden centre">
       {/* Hero Section */}
-      <Hero />
+      
+      <Heronew/>
       
       
 
@@ -552,15 +624,7 @@ export default function Home() {
       
       <CategoryShowcase/>
 
-      
-
-      <div className="w-full my-6">
-      <img
-        src="https://i.ibb.co/HT6r03PL/Whats-App-Image-2025-06-13-at-13-05-02-ca6a2d20.jpg"
-        alt="Promotional Banner"
-        className="w-full h-auto object-cover rounded-lg shadow-md"
-      />
-    </div>
+    <Newcollection/>
 
 
       
