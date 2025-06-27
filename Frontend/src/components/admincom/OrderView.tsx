@@ -82,6 +82,7 @@ const OrderView = ({ orderId }) => {
               <div key={index} className="flex justify-between items-center py-2 border-b">
                 <span className="text-gray-600">{item.productName}</span>
                 <span className="text-gray-600">Qty: {item.quantity}</span>
+                <span className="text-gray-600">Qty: {item.size}</span>
                 <span className="text-gray-600">LKR {item.price.toFixed(2)}</span>
               </div>
             ))}

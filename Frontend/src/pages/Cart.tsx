@@ -14,15 +14,22 @@ export default function Cart() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     phone1: '',
     phone2: '',
     address: '',
+    city:'',
+    district:'',
+
   });
   const [formErrors, setFormErrors] = useState({
     name: '',
+    email: '',
     phone1: '',
     phone2: '',
     address: '',
+    city:'',
+    district:'',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -122,6 +129,16 @@ export default function Cart() {
     setError(null);
   };
 
+  const handlekokoCheckout = () => {
+    navigate('/cart/checkoutkoko', {
+      state: {
+        cartItems: cartItems,
+        total: total
+      }
+    });
+    setError(null);
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -143,6 +160,7 @@ export default function Cart() {
           quantity: item.quantity,
           color: item.product?.color || 'N/A',
           price: item.product?.price,
+          size: item.product?.size || 'N/A',
         })),
         totalAmount: total,
       };
@@ -281,24 +299,26 @@ export default function Cart() {
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping</span>
-                    <span>Free</span>
+                    <span>LKR 350</span>
                   </div>
                   <div className="border-t pt-2 font-semibold">
                     <div className="flex justify-between">
                       <span>Total</span>
-                      <span>LKR {total.toFixed(2)}</span>
+                      <span>LKR {(total+350).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
-
+<div className="mt-4 space-y-2">
+                
+                
                 <button
-                  onClick={handleCheckout}
-                  className="block w-full bg-black text-white text-center py-3 rounded-full hover:bg-gray-800 transition-colors"
+                  onClick={handlekokoCheckout}
+                  className="block w-full bg-black text-white text-center py-3 rounded-full hover:bg-pink-800 transition-colors"
                 >
-                  Proceed to Checkout
+                   Checkout
                 </button>
 
-                <div className="mt-4 space-y-2">
+                
                   <button
                     onClick={handleAddMoreItems}
                     className="w-full bg-gray-700 text-white py-3 rounded-full hover:bg-gray-00 transition-colors"
@@ -324,80 +344,120 @@ export default function Cart() {
               <h2 className="text-xl font-semibold mb-4">Enter Your Details</h2>
               {error && <p className="text-red-500 mb-4">{error}</p>}
               <form onSubmit={handleFormSubmit}>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Full Name*</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleFormChange}
-                      placeholder="Enter your full name"
-                      className={`w-full p-2 border rounded ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Primary Phone*</label>
-                    <input
-                      type="tel"
-                      name="phone1"
-                      value={formData.phone1}
-                      onChange={handleFormChange}
-                      placeholder="Enter 10-digit phone number"
-                      maxLength="10"
-                      className={`w-full p-2 border rounded ${formErrors.phone1 ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {formErrors.phone1 && <p className="text-red-500 text-xs mt-1">{formErrors.phone1}</p>}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Secondary Phone</label>
-                    <input
-                      type="tel"
-                      name="phone2"
-                      value={formData.phone2}
-                      onChange={handleFormChange}
-                      placeholder="Optional 10-digit phone number"
-                      maxLength="10"
-                      className={`w-full p-2 border rounded ${formErrors.phone2 ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {formErrors.phone2 && <p className="text-red-500 text-xs mt-1">{formErrors.phone2}</p>}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Address*</label>
-                    <textarea
-                      name="address"
-                      value={formData.address}
-                      onChange={handleFormChange}
-                      placeholder="Enter your full address"
-                      rows="3"
-                      className={`w-full p-2 border rounded ${formErrors.address ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
-                  </div>
-                  
-                  <div className="flex justify-between pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowModal(false)}
-                      className="bg-gray-500 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors"
-                      disabled={isSubmitting}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? 'Processing...' : 'Submit Order'}
-                    </button>
-                  </div>
-                </div>
-              </form>
+  <div className="space-y-4">
+    <div>
+      <label className="block text-sm font-medium mb-1">Full Name*</label>
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleFormChange}
+        placeholder="Enter your full name"
+        className={`w-full p-2 border rounded ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">Email*</label>
+      <input
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleFormChange}
+        placeholder="Enter your email"
+        className={`w-full p-2 border rounded ${formErrors.email ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">Primary Phone*</label>
+      <input
+        type="tel"
+        name="phone1"
+        value={formData.phone1}
+        onChange={handleFormChange}
+        placeholder="Enter 10-digit phone number"
+        maxLength="10"
+        className={`w-full p-2 border rounded ${formErrors.phone1 ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.phone1 && <p className="text-red-500 text-xs mt-1">{formErrors.phone1}</p>}
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">Secondary Phone</label>
+      <input
+        type="tel"
+        name="phone2"
+        value={formData.phone2}
+        onChange={handleFormChange}
+        placeholder="Optional 10-digit phone number"
+        maxLength="10"
+        className={`w-full p-2 border rounded ${formErrors.phone2 ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.phone2 && <p className="text-red-500 text-xs mt-1">{formErrors.phone2}</p>}
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">Address*</label>
+      <textarea
+        name="address"
+        value={formData.address}
+        onChange={handleFormChange}
+        placeholder="Enter your full address"
+        rows="3"
+        className={`w-full p-2 border rounded ${formErrors.address ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">City*</label>
+      <input
+        type="text"
+        name="city"
+        value={formData.city}
+        onChange={handleFormChange}
+        placeholder="Enter your city"
+        className={`w-full p-2 border rounded ${formErrors.city ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.city && <p className="text-red-500 text-xs mt-1">{formErrors.city}</p>}
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">District*</label>
+      <input
+        type="text"
+        name="district"
+        value={formData.district}
+        onChange={handleFormChange}
+        placeholder="Enter your district"
+        className={`w-full p-2 border rounded ${formErrors.district ? 'border-red-500' : 'border-gray-300'}`}
+      />
+      {formErrors.district && <p className="text-red-500 text-xs mt-1">{formErrors.district}</p>}
+    </div>
+
+    <div className="flex justify-between pt-2">
+      <button
+        type="button"
+        onClick={() => setShowModal(false)}
+        className="bg-gray-500 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors"
+        disabled={isSubmitting}
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Processing...' : 'Submit Order'}
+      </button>
+    </div>
+  </div>
+          </form>
+
             </div>
           </div>
         )}

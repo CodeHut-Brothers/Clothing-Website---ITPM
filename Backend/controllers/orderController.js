@@ -27,22 +27,42 @@ exports.getOrderById = async (req, res) => {
 
 // POST a new order
 exports.addOrder = async (req, res) => {
-  const { name, phone1, phone2, address, cartItems, totalAmount, status } = req.body;
+  const { name, phone1, phone2, address, cartItems, totalAmount, status, email, city, district } = req.body;
 
   try {
+    // Get the last order to determine the next ID
+    const lastOrder = await Order.findOne().sort({ createdAt: -1 });
+
+    let nextOrderNumber = 1;
+
+    if (lastOrder && lastOrder.odercid) {
+      const lastIdNumber = parseInt(lastOrder.odercid.replace("CNO", ""));
+      if (!isNaN(lastIdNumber)) {
+        nextOrderNumber = lastIdNumber + 1;
+      }
+    }
+
+    // Format the new order ID (e.g., CNO0001)
+    const odercid = `CNO${String(nextOrderNumber).padStart(4, '0')}`;
+
     const newOrder = new Order({
       name,
       phone1,
       phone2,
       address,
+      email,
+      city,
+      district,
       cartItems,
       totalAmount,
-      status: status || 'pending', // Default status is 'pending'
+      status: status || 'pending',
+      odercid,
     });
 
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (error) {
+    console.error('Order Save Error:', error);
     res.status(400).json({ message: 'Error adding order', error });
   }
 };

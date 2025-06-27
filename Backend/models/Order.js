@@ -15,9 +15,21 @@ const orderSchema = new mongoose.Schema(
     phone2: {
       type: String // Secondary phone number is required
     },
+    email: {
+      type: String 
+    },
+    odercid: {
+      type: String 
+    },
     address: {
       type: String,
       required: true, // Delivery address is required
+    },
+    city: {
+      type: String,
+    },
+    district: {
+      type: String,
     },
     cartItems: [
       {
@@ -32,6 +44,9 @@ const orderSchema = new mongoose.Schema(
         color: {
           type: String,
           required: true, 
+        },
+        size: {
+          type: String,
         },
         price: {
           type: Number,

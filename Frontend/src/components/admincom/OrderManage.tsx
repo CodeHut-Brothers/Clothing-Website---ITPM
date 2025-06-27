@@ -176,6 +176,7 @@ const OrderManage = () => {
     const itemsTableData = selectedOrder.cartItems.map(item => [
       item.productName,
       item.color || "N/A",
+      item.size || "N/A",
       item.quantity,
       `$${item.price.toFixed(2)}`,
       `$${(item.price * item.quantity).toFixed(2)}`
@@ -183,7 +184,7 @@ const OrderManage = () => {
     
     autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 20,
-      head: [['Product', 'Color', 'Quantity', 'Price', 'Total']],
+      head: [['Product', 'Color', 'Quantity', 'Price','Size', 'Total']],
       body: itemsTableData,
       headStyles: { fillColor: [59, 130, 246] },
     });
@@ -441,6 +442,7 @@ const OrderManage = () => {
                             <div>
                               <p className="font-medium">{item.productName}</p>
                               <p className="text-sm text-gray-500">Color: {item.color}</p>
+                              <p className="text-sm text-gray-500">Size: {item.size}</p>
                               <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                             </div>
                           </div>
