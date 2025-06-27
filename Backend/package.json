@@ -19,6 +19,7 @@
     "mongoose": "^8.8.3",
     "nodemailer": "^6.9.16",
     "openai": "^4.85.4",
+    "react-hot-toast": "^2.5.2",
     "uuid": "^11.0.3"
   }
 }

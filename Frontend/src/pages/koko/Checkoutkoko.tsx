@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CheckCircle, CreditCard, Phone, MapPin, User, Mail } from 'lucide-react';
+import { CheckCircle, CreditCard, Phone, MapPin, User, Mail,ArrowLeft } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import axios from 'axios';
 
@@ -157,6 +157,7 @@ export default function Checkoutkoko() {
           price: item.product?.price,
         })),
         customerDetails: {
+
           name: (formData.firstName +" "+ formData.lastName),
           phone1: formData.phone1,
           phone2: formData.phone2,
@@ -305,149 +306,240 @@ export default function Checkoutkoko() {
               </div>
             )}
 
-            <form className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    <User className="w-4 h-4 inline mr-1" />
-                    First Name*
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleFormChange}
-                    placeholder="Enter first name"
-                    className={`w-full p-3 border rounded-lg ${formErrors.firstName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent`}
-                  />
-                  {formErrors.firstName && <p className="text-red-500 text-xs mt-1">{formErrors.firstName}</p>}
-                </div>
+            <form className="space-y-6">
+        {/* Personal Information */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Personal Information</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                <User className="w-4 h-4 inline mr-2" />
+                First Name*
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleFormChange}
+                placeholder="Enter first name"
+                className={`w-full p-3 border rounded-lg transition-colors ${
+                  formErrors.firstName 
+                    ? 'border-red-500 focus:ring-red-200' 
+                    : 'border-gray-300 focus:ring-blue-200'
+                } focus:outline-none focus:ring-2 focus:border-transparent`}
+              />
+              {formErrors.firstName && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.firstName}</p>
+              )}
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    <User className="w-4 h-4 inline mr-1" />
-                    Last Name*
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleFormChange}
-                    placeholder="Enter last name"
-                    className={`w-full p-3 border rounded-lg ${formErrors.lastName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent`}
-                  />
-                  {formErrors.lastName && <p className="text-red-500 text-xs mt-1">{formErrors.lastName}</p>}
-                </div>
-              </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                <User className="w-4 h-4 inline mr-2" />
+                Last Name*
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleFormChange}
+                placeholder="Enter last name"
+                className={`w-full p-3 border rounded-lg transition-colors ${
+                  formErrors.lastName 
+                    ? 'border-red-500 focus:ring-red-200' 
+                    : 'border-gray-300 focus:ring-blue-200'
+                } focus:outline-none focus:ring-2 focus:border-transparent`}
+              />
+              {formErrors.lastName && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.lastName}</p>
+              )}
+            </div>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  <Mail className="w-4 h-4 inline mr-1" />
-                  Email Address*
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  placeholder="Enter email address"
-                  className={`w-full p-3 border rounded-lg ${formErrors.email ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent`}
-                />
-                {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-              </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2 text-gray-700">
+              <Mail className="w-4 h-4 inline mr-2" />
+              Email Address*
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleFormChange}
+              placeholder="Enter email address"
+              className={`w-full p-3 border rounded-lg transition-colors ${
+                formErrors.email 
+                  ? 'border-red-500 focus:ring-red-200' 
+                  : 'border-gray-300 focus:ring-blue-200'
+              } focus:outline-none focus:ring-2 focus:border-transparent`}
+            />
+            {formErrors.email && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+            )}
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    <Phone className="w-4 h-4 inline mr-1" />
-                    Primary Phone*
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone1"
-                    value={formData.phone1}
-                    onChange={handleFormChange}
-                    placeholder="10-digit phone number"
-                    maxLength="10"
-                    className={`w-full p-3 border rounded-lg ${formErrors.phone1 ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent`}
-                  />
-                  {formErrors.phone1 && <p className="text-red-500 text-xs mt-1">{formErrors.phone1}</p>}
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                <Phone className="w-4 h-4 inline mr-2" />
+                Primary Phone*
+              </label>
+              <input
+                type="tel"
+                name="phone1"
+                value={formData.phone1}
+                onChange={handleFormChange}
+                placeholder="0123456789"
+                maxLength="10"
+                className={`w-full p-3 border rounded-lg transition-colors ${
+                  formErrors.phone1 
+                    ? 'border-red-500 focus:ring-red-200' 
+                    : 'border-gray-300 focus:ring-blue-200'
+                } focus:outline-none focus:ring-2 focus:border-transparent`}
+              />
+              {formErrors.phone1 && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.phone1}</p>
+              )}
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    <Phone className="w-4 h-4 inline mr-1" />
-                    Secondary Phone
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone2"
-                    value={formData.phone2}
-                    onChange={handleFormChange}
-                    placeholder="Optional phone number"
-                    maxLength="10"
-                    className={`w-full p-3 border rounded-lg ${formErrors.phone2 ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent`}
-                  />
-                  {formErrors.phone2 && <p className="text-red-500 text-xs mt-1">{formErrors.phone2}</p>}
-                </div>
-              </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                <Phone className="w-4 h-4 inline mr-2" />
+                Secondary Phone
+              </label>
+              <input
+                type="tel"
+                name="phone2"
+                value={formData.phone2}
+                onChange={handleFormChange}
+                placeholder="Optional phone number"
+                maxLength="10"
+                className={`w-full p-3 border rounded-lg transition-colors ${
+                  formErrors.phone2 
+                    ? 'border-red-500 focus:ring-red-200' 
+                    : 'border-gray-300 focus:ring-blue-200'
+                } focus:outline-none focus:ring-2 focus:border-transparent`}
+              />
+              {formErrors.phone2 && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.phone2}</p>
+              )}
+            </div>
+          </div>
+        </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  <MapPin className="w-4 h-4 inline mr-1" />
-                  Delivery Address*
-                </label>
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleFormChange}
-                  placeholder="Enter your full delivery address"
-                  rows="3"
-                  className={`w-full p-3 border rounded-lg ${formErrors.address ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent`}
-                />
-                {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
-              </div>
+        {/* Delivery Information */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Delivery Information</h3>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2 text-gray-700">
+              <MapPin className="w-4 h-4 inline mr-2" />
+              Delivery Address*
+            </label>
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleFormChange}
+              placeholder="Enter your full delivery address with house number, street name, and landmarks"
+              rows="3"
+              className={`w-full p-3 border rounded-lg transition-colors resize-none ${
+                formErrors.address 
+                  ? 'border-red-500 focus:ring-red-200' 
+                  : 'border-gray-300 focus:ring-blue-200'
+              } focus:outline-none focus:ring-2 focus:border-transparent`}
+            />
+            {formErrors.address && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.address}</p>
+            )}
+          </div>
 
-              {/* Payment Method Selection */}
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold mb-4">Select Payment Method</h3>
-                
-                <div className="space-y-4">
-                  {/* Koko Payment Button */}
-                  <button
-                    type="button"
-                    onClick={handleKokoPayment}
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-3 font-medium shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <CreditCard className="w-5 h-5" />
-                    {isSubmitting ? 'Processing...' : 'Pay with Koko Payment'}
-                  </button>
-                  
-                  {/* Cash on Delivery Button */}
-                  <button
-                    type="button"
-                    onClick={handleCashOnDelivery}
-                    disabled={isSubmitting}
-                    className="w-full bg-green-600 text-white py-4 px-6 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-3 font-medium shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Phone className="w-5 h-5" />
-                    {isSubmitting ? 'Processing...' : 'Cash on Delivery'}
-                  </button>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                City*
+              </label>
+              <input
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleFormChange}
+                placeholder="Enter city"
+                className={`w-full p-3 border rounded-lg transition-colors ${
+                  formErrors.city 
+                    ? 'border-red-500 focus:ring-red-200' 
+                    : 'border-gray-300 focus:ring-blue-200'
+                } focus:outline-none focus:ring-2 focus:border-transparent`}
+              />
+              {formErrors.city && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>
+              )}
+            </div>
 
-              <div className="flex justify-between pt-4">
-                <button
-                  type="button"
-                  onClick={() => navigate('/cart')}
-                  className="bg-gray-500 text-white py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors"
-                  disabled={isSubmitting}
-                >
-                  Back to Cart
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                District*
+              </label>
+              <input
+                type="text"
+                name="district"
+                value={formData.district}
+                onChange={handleFormChange}
+                placeholder="Enter district"
+                className={`w-full p-3 border rounded-lg transition-colors ${
+                  formErrors.district 
+                    ? 'border-red-500 focus:ring-red-200' 
+                    : 'border-gray-300 focus:ring-blue-200'
+                } focus:outline-none focus:ring-2 focus:border-transparent`}
+              />
+              {formErrors.district && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.district}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Method Selection */}
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Select Payment Method</h3>
+          
+          <div className="space-y-4">
+            {/* Koko Payment Button */}
+            <button
+              type="button"
+              onClick={handleKokoPayment}
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-3 font-medium shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02]"
+            >
+              <CreditCard className="w-5 h-5" />
+              {isSubmitting ? 'Processing...' : 'Pay with Koko Payment'}
+            </button>
+            
+            {/* Cash on Delivery Button */}
+            <button
+              type="button"
+              onClick={handleCashOnDelivery}
+              disabled={isSubmitting}
+              className="w-full bg-green-600 text-white py-4 px-6 rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center justify-center gap-3 font-medium shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02]"
+            >
+              <Phone className="w-5 h-5" />
+              {isSubmitting ? 'Processing...' : 'Cash on Delivery'}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-between pt-4">
+          <button
+            type="button"
+            onClick={() => navigate('/cart')}
+            className="bg-gray-500 text-white py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+            disabled={isSubmitting}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Cart
+          </button>
+        </div>
+      </form>
           </div>
         </div>
 

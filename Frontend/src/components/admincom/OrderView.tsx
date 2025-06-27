@@ -72,7 +72,10 @@ const OrderView = ({ orderId }) => {
           <div className="flex items-center">
             <FaMapMarkerAlt className="text-blue-600 mr-2" />
             <span className="text-gray-600">Address: {order.address}</span>
+            <span className="text-gray-600">Address: {order.city}</span>
+            <span className="text-gray-600">Address: {order.district}</span>
           </div>
+          
         </div>
 
         <div className="mt-6">

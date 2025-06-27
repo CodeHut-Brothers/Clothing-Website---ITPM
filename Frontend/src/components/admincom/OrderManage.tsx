@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { generateOrderPDF } from '../../utils/pdfGenerator'; // adjust path as needed
 import { 
   FiEdit, 
   FiEye, 
@@ -125,80 +126,255 @@ const OrderManage = () => {
     return orders.filter(order => order.status === status).length;
   };
 
-  const generateOrderPDF = () => {
-    if (!selectedOrder) return;
-    
-    // Create a new PDF document
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    
-    // Add title
-    const title = "Order Report";
-    doc.setFontSize(20);
-    doc.text(title, pageWidth / 2, 15, { align: 'center' });
-    
-    // Add order ID
-    doc.setFontSize(12);
-    doc.text(`Order ID: ${selectedOrder._id || selectedOrder.id || 'N/A'}`, 14, 25);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 32);
-    doc.text(`Status: ${selectedOrder.status.toUpperCase()}`, 14, 39);
-    
-    // Customer information
-    doc.setFontSize(16);
-    doc.text("Customer Information", 14, 50);
-    doc.setFontSize(12);
-    doc.text(`Name: ${selectedOrder.name}`, 14, 58);
-    doc.text(`Primary Phone: ${selectedOrder.phone1}`, 14, 65);
-    doc.text(`Secondary Phone: ${selectedOrder.phone2 || "N/A"}`, 14, 72);
-    doc.text(`Address: ${selectedOrder.address}`, 14, 79);
-    
-    // Order Summary
-    doc.setFontSize(16);
-    doc.text("Order Summary", 14, 95);
-    
-    // Summary table
-    autoTable(doc, {
-      startY: 100,
-      head: [['Description', 'Amount']],
-      body: [
-        ['Subtotal', `$${selectedOrder.totalAmount?.toFixed(2) || "0.00"}`],
-        ['Shipping', '$0.00'],
-        ['Total', `$${selectedOrder.totalAmount?.toFixed(2) || "0.00"}`]
-      ],
-      headStyles: { fillColor: [59, 130, 246] },
-    });
-    
-    // Order items
-    doc.setFontSize(16);
-    doc.text("Ordered Items", 14, doc.lastAutoTable.finalY + 15);
-    
-    // Items table
-    const itemsTableData = selectedOrder.cartItems.map(item => [
-      item.productName,
-      item.color || "N/A",
-      item.size || "N/A",
-      item.quantity,
-      `$${item.price.toFixed(2)}`,
-      `$${(item.price * item.quantity).toFixed(2)}`
-    ]);
-    
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 20,
-      head: [['Product', 'Color', 'Quantity', 'Price','Size', 'Total']],
-      body: itemsTableData,
-      headStyles: { fillColor: [59, 130, 246] },
-    });
-    
-    // Footer
-    const footerText = "Thank you for your business!";
-    doc.setFontSize(10);
-    doc.text(footerText, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
-    
-    // Save the PDF
-    doc.save(`Order_${selectedOrder._id || selectedOrder.id || 'Report'}.pdf`);
-    
-    toast.success("Order report downloaded successfully!");
-  };
+const generateOrderPDF = async () => {
+  if (!selectedOrder) return;
+
+  // Create a new PDF document
+  const doc = new jsPDF('p', 'mm', 'a5');
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  
+  // Simple professional colors
+  const black = [0, 0, 0];
+  const darkGray = [60, 60, 60];
+  const lightGray = [150, 150, 150];
+  const veryLightGray = [245, 245, 245];
+  const white = [255, 255, 255];
+
+  // Clean header
+  doc.setFillColor(...black);
+  doc.rect(0, 0, pageWidth, 35, 'F');
+  
+  // Company name - simple and bold
+  doc.setTextColor(...white);
+  doc.setFontSize(24);
+  doc.setFont('helvetica', 'bold');
+  doc.text('CANNIBAL.CO', 20, 15);
+  
+  // Website and contact
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text('cannibalco.com  |  +94 78 289 8993', 20, 25);
+  
+  // Invoice title - right aligned
+  doc.setTextColor(...black);
+  doc.setFontSize(28);
+  doc.setFont('helvetica', 'bold');
+  doc.text('INVOICE', pageWidth - 20, 55, { align: 'right' });
+  
+  // Simple line under invoice
+  doc.setDrawColor(...black);
+  doc.setLineWidth(1);
+  doc.line(pageWidth - 60, 58, pageWidth - 20, 58);
+  
+  // Invoice details box - clean and minimal
+  let yPos = 65;
+  doc.setFillColor(...veryLightGray);
+  doc.rect(pageWidth - 65, yPos, 50, 30, 'F');
+  doc.setDrawColor(...lightGray);
+  doc.setLineWidth(0.5);
+  doc.rect(pageWidth - 65, yPos, 50, 30);
+  
+  doc.setTextColor(...black);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Invoice No:', pageWidth - 62, yPos + 6);
+  doc.setFont('helvetica', 'normal');
+  doc.text(selectedOrder.odercid || selectedOrder._id?.slice(-8) || 'N/A', pageWidth - 62, yPos + 12);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.text('Date:', pageWidth - 62, yPos + 18);
+  doc.setFont('helvetica', 'normal');
+  doc.text(new Date(selectedOrder.createdAt || new Date()).toLocaleDateString(), pageWidth - 62, yPos + 24);
+  
+  // Status - simple badge
+  yPos += 35;
+  const statusColor = selectedOrder.status === 'completed' ? [34, 139, 34] : 
+                     selectedOrder.status === 'cancelled' ? [220, 20, 60] : lightGray;
+  
+  doc.setFillColor(...statusColor);
+  doc.rect(pageWidth - 45, yPos, 30, 8, 'F');
+  doc.setTextColor(...white);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.text(selectedOrder.status.toUpperCase(), pageWidth - 30, yPos + 5, { align: 'center' });
+  
+  // Company address - simple format
+  yPos = 65;
+  doc.setTextColor(...black);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text('FROM:', 20, yPos);
+  
+  doc.setFontSize(11);
+  doc.text('CANNIBAL.CO', 20, yPos + 8);
+  
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Suramya, Dewagoda, Madampe', 20, yPos + 16);
+  doc.text('Ambalangoda, Sri Lanka', 20, yPos + 22);
+  doc.text('Phone: +94 78 289 8993', 20, yPos + 30);
+  doc.text('Web: cannibalco.com', 20, yPos + 36);
+  
+  // Customer section - clean box
+  yPos += 50;
+  doc.setFillColor(...veryLightGray);
+  doc.rect(15, yPos, pageWidth - 30, 40, 'F');
+  doc.setDrawColor(...lightGray);
+  doc.setLineWidth(0.5);
+  doc.rect(15, yPos, pageWidth - 30, 40);
+  
+  // Customer header
+  doc.setFillColor(...darkGray);
+  doc.rect(15, yPos, pageWidth - 30, 8, 'F');
+  doc.setTextColor(...white);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('BILL TO:', 20, yPos + 5);
+  
+  // Customer details - simple layout
+  yPos += 12;
+  doc.setTextColor(...black);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text(selectedOrder.name, 20, yPos);
+  
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Phone: ${selectedOrder.phone1}`, 20, yPos + 8);
+  if (selectedOrder.phone2) {
+    doc.text(`Alt Phone: ${selectedOrder.phone2}`, 20, yPos + 14);
+    yPos += 6;
+  }
+  if (selectedOrder.email) {
+    doc.text(`Email: ${selectedOrder.email}`, 20, yPos + 14);
+    yPos += 6;
+  }
+  doc.text(`Address: ${selectedOrder.address}`, 20, yPos + 14);
+  if (selectedOrder.city) {
+    doc.text(`City: ${selectedOrder.city},${selectedOrder.district}`, 20, yPos + 20);
+  }
+  
+  // Items table - clean and simple
+  yPos += 35;
+  
+  // Table header
+  doc.setFillColor(...darkGray);
+  doc.rect(15, yPos, pageWidth - 30, 10, 'F');
+  doc.setTextColor(...white);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ORDER DETAILS', 20, yPos + 6);
+  
+  yPos += 15;
+  
+  // Simple table with autoTable
+  const itemsTableData = selectedOrder.cartItems.map((item, index) => [
+    (index + 1).toString(),
+    item.productName,
+    item.color || 'N/A',
+    item.size || 'N/A',
+    item.quantity.toString(),
+    `LKR ${item.price.toFixed(2)}`,
+    `LKR ${(item.price * item.quantity).toFixed(2)}`
+  ]);
+  
+  autoTable(doc, {
+    startY: yPos,
+    head: [['#', 'Product', 'Color', 'Size', 'Qty', 'Price', 'Total']],
+    body: itemsTableData,
+    theme: 'striped',
+    headStyles: { 
+      fillColor: [60, 60, 60],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 9
+    },
+    bodyStyles: {
+      fontSize: 8,
+      textColor: [0, 0, 0]
+    },
+    alternateRowStyles: {
+      fillColor: [250, 250, 250]
+    },
+    columnStyles: {
+      0: { halign: 'center', cellWidth: 15 },
+      1: { cellWidth: 70 },
+      2: { halign: 'center', cellWidth: 20 },
+      3: { halign: 'center', cellWidth: 20 },
+      4: { halign: 'center', cellWidth: 15 },
+      5: { halign: 'right', cellWidth: 25 },
+      6: { halign: 'right', cellWidth: 25, fontStyle: 'bold' }
+    },
+    margin: { left: 15, right: 15 }
+  });
+  
+  // Simple totals section
+  const totalsY = doc.lastAutoTable.finalY + 20;
+  
+  doc.setFillColor(...veryLightGray);
+  doc.rect(pageWidth - 70, totalsY, 60, 35, 'F');
+  doc.setDrawColor(...lightGray);
+  doc.setLineWidth(0.5);
+  doc.rect(pageWidth - 70, totalsY, 60, 35);
+  
+  // Totals header
+  doc.setFillColor(...darkGray);
+  doc.rect(pageWidth - 70, totalsY, 60, 8, 'F');
+  doc.setTextColor(...white);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('TOTAL', pageWidth - 40, totalsY + 5, { align: 'center' });
+  
+  // Calculate totals
+  const subtotal = selectedOrder.totalAmount || 0;
+  const shipping = 350;
+  const total = subtotal + shipping;
+  
+  doc.setTextColor(...black);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Subtotal:', pageWidth - 65, totalsY + 15);
+  doc.text(`LKR ${subtotal.toFixed(2)}`, pageWidth - 15, totalsY + 15, { align: 'right' });
+  
+  doc.text('Shipping:', pageWidth - 65, totalsY + 22);
+  doc.text(`LKR ${shipping.toFixed(2)}`, pageWidth - 15, totalsY + 22, { align: 'right' });
+  
+  // Total line
+  doc.setDrawColor(...darkGray);
+  doc.setLineWidth(0.5);
+  doc.line(pageWidth - 65, totalsY + 25, pageWidth - 15, totalsY + 25);
+  
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text('TOTAL:', pageWidth - 65, totalsY + 32);
+  doc.text(`LKR ${total.toFixed(2)}`, pageWidth - 15, totalsY + 32, { align: 'right' });
+  
+  // Simple footer
+  const footerY = pageHeight - 30;
+  
+  doc.setDrawColor(...lightGray);
+  doc.setLineWidth(0.5);
+  doc.line(20, footerY, pageWidth - 20, footerY);
+  
+  // Thank you message
+  doc.setTextColor(...black);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Thank you!', pageWidth / 2, footerY + 10, { align: 'center' });
+  
+  // Footer note
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...lightGray);
+  doc.text('This invoice was generated electronically and is valid without signature.', pageWidth / 2, footerY + 18, { align: 'center' });
+  
+  // Save with clean filename
+  const filename = `Invoice_${selectedOrder.odercid || selectedOrder._id?.slice(-8) || 'ORDER'}_${new Date().toISOString().split('T')[0]}.pdf`;
+  doc.save(filename);
+  
+  toast.success("Professional invoice generated successfully!");
+};
 
   const totalOrders = orders.length;
   const completedOrders = countOrdersByStatus("completed");
@@ -302,56 +478,60 @@ const OrderManage = () => {
   </div>
 </div>
           
-          {/* Order List */}
-          <div className="space-y-3">
-            {filteredOrders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-                <FiPackage size={48} className="mb-4" />
-                <p>No orders found</p>
-              </div>
-            ) : (
-              filteredOrders.map((order) => (
-                <motion.div
-                  key={order.id}
-                  className={`p-4 rounded-xl cursor-pointer border-l-4 ${getStatusColor(order.status)} bg-white shadow-sm hover:shadow-md transition-all`}
-                  onClick={() => handleSelectOrder(order)}
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                        <FiUser className="text-gray-400" />
-                        {order.name}
-                      </h2>
-                      <p className="text-sm text-gray-600 flex items-center gap-2">
-                        <FiPhone className="text-gray-400" />
-                        {order.phone1}
-                      </p>
-                      <p className="text-sm text-gray-600 flex items-start gap-2">
-                        <FiMapPin className="text-gray-400 mt-0.5" />
-                        <span className="flex-1">{order.address}</span>
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end space-y-1">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </span>
-                      <span className="text-sm font-medium text-gray-700">
-                        ${order.totalAmount?.toFixed(2) || "0.00"}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))
-            )}
+          {/* Order List with Scrollbar */}
+<div className="h-96 overflow-y-visible pr-2">
+  <div className="space-y-3">
+    {filteredOrders.length === 0 ? (
+      <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+        <FiPackage size={48} className="mb-4" />
+        <p>No orders found</p>
+      </div>
+    ) : (
+      filteredOrders.map((order) => (
+        <motion.div
+          key={order.id}
+          className={`p-4 rounded-xl cursor-pointer border-l-4 ${getStatusColor(order.status)} bg-white shadow-sm hover:shadow-md transition-all`}
+          onClick={() => handleSelectOrder(order)}
+          whileHover={{ y: -2 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <FiUser className="text-gray-400" />
+                {order.name}
+              </h2>
+              <p className="text-sm text-gray-600 flex items-center gap-2">
+                <FiPhone className="text-gray-400" />
+                {order.phone1}
+              </p>
+              <p className="text-sm text-gray-600 flex items-start gap-2">
+                <FiMapPin className="text-gray-400 mt-0.5" />
+                <span className="flex-1">{order.address}</span>
+              </p>
+            </div>
+            <div className="flex flex-col items-end space-y-1">
+              <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              </span>
+              <span className="text-sm font-medium text-gray-700">
+                ${order.totalAmount?.toFixed(2) || "0.00"}
+              </span>
+            </div>
           </div>
+        </motion.div>
+      ))
+    )}
+  </div>
+</div>
         </div>
       </motion.div>
 
       {/* Right Panel: Order Details */}
       <AnimatePresence>
+        
         {selectedOrder && (
+          
           <motion.div
             className="fixed inset-0 lg:relative lg:w-1/2 bg-white lg:bg-gray-50 z-10 lg:z-0 p-6 overflow-y-auto shadow-xl lg:shadow-none"
             initial={{ x: "100%" }}
@@ -378,29 +558,35 @@ const OrderManage = () => {
                     Customer Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Name</p>
-                      <p className="font-medium">{formData.name}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Primary Phone</p>
-                      <p className="font-medium">{formData.phone1}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Secondary Phone</p>
-                      <p className="font-medium">{formData.phone2 || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Order Status</p>
-                      <p className={`font-medium inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${getStatusColor(formData.status)}`}>
-                        {formData.status.charAt(0).toUpperCase() + formData.status.slice(1)}
-                      </p>
-                    </div>
-                    <div className="md:col-span-2">
-                      <p className="text-sm text-gray-500">Delivery Address</p>
-                      <p className="font-medium">{formData.address}</p>
-                    </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Order ID</p>
+                    <p className="font-medium">{formData.odercid}</p>
                   </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Name</p>
+                    <p className="font-medium">{formData.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Primary Phone</p>
+                    <p className="font-medium">{formData.phone1}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Secondary Phone</p>
+                    <p className="font-medium">{formData.phone2 || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Order Status</p>
+                    <p className={`font-medium inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${getStatusColor(formData.status)}`}>
+                      {formData.status.charAt(0).toUpperCase() + formData.status.slice(1)}
+                    </p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-gray-500">Delivery Address</p>
+                    <p className="font-medium">Home : {formData.address}</p>
+                    <p className="font-medium">City : {formData.city}</p>
+                    <p className="font-medium">District : {formData.district}</p>
+                  </div>
+                </div>
                 </div>
                 
                 {/* Order Summary Card */}
@@ -412,18 +598,41 @@ const OrderManage = () => {
                   <div className="space-y-4">
                     <div className="flex justify-between border-b pb-2">
                       <p className="text-gray-600">Subtotal</p>
-                      <p className="font-medium">${formData.totalAmount?.toFixed(2) || "0.00"}</p>
+                      <p className="font-medium">{formData.totalAmount?.toFixed(2) || "0.00"}</p>
                     </div>
                     <div className="flex justify-between border-b pb-2">
                       <p className="text-gray-600">Shipping</p>
-                      <p className="font-medium">$0.00</p>
+                      <p className="font-medium">350.00</p>
                     </div>
                     <div className="flex justify-between text-lg font-semibold">
                       <p>Total</p>
-                      <p>${formData.totalAmount?.toFixed(2) || "0.00"}</p>
+                     <p>LKR {((formData.totalAmount || 0) + 350).toFixed(2)}</p>
+
                     </div>
                   </div>
                 </div>
+                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={resetForm}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={generateOrderPDF}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
+                >
+                  <FiFileText size={16} />
+                  Report
+                </button>
+                <button
+                  onClick={() => navigate(`/order-edit/${selectedOrder._id}`)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                >
+                  <FiEdit size={16} />
+                  Edit Order
+                </button>
+              </div>
                 
                 {/* Items List Card */}
                 <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
@@ -447,7 +656,7 @@ const OrderManage = () => {
                             </div>
                           </div>
                           <p className="font-medium">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            LKR {(item.price * item.quantity).toFixed(2)}
                           </p>
                         </div>
                       ))
@@ -456,30 +665,10 @@ const OrderManage = () => {
                     )}
                   </div>
                 </div>
+                
               </div>
               
-              <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 mt-6">
-                <button
-                  onClick={resetForm}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-                >
-                  Close
-                </button>
-                <button
-                  onClick={generateOrderPDF}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
-                >
-                  <FiFileText size={16} />
-                  Report
-                </button>
-                <button
-                  onClick={() => navigate(`/order-edit/${selectedOrder._id}`)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
-                >
-                  <FiEdit size={16} />
-                  Edit Order
-                </button>
-              </div>
+              
             </div>
           </motion.div>
         )}

@@ -72,3 +72,6 @@ const orderSchema = new mongoose.Schema(
 // Create and export the Order model
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;
+
+
+//generateOrderPDF
