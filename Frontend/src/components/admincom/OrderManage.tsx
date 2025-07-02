@@ -130,7 +130,7 @@ const generateOrderPDF = async () => {
   if (!selectedOrder) return;
 
   // Create a new PDF document
-  const doc = new jsPDF('p', 'mm', 'a5');
+  const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   

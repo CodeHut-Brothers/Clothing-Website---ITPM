@@ -177,7 +177,7 @@ export default function About() {
             <AnimatedSection>
               <h2 className="text-4xl font-bold mb-6 relative">
                 Who We Are
-                <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-purple-600 to-pink-600"></span>
+                <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-red-600 to-pink-600"></span>
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg">
                 Cannibal is more than just a clothing brand - it’s a movement built on bold self-expression, fearless individuality, and uncompromising quality. Founded in Sri Lanka, we blend cutting-edge style with affordability, making high-quality fashion accessible to everyone who dares to stand out.
@@ -190,7 +190,7 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
             <AnimatedSection delay={200}>
               <h2 className="text-4xl font-bold mb-6 relative">
                 Our Philosophy
-                <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-purple-600 to-pink-600"></span>
+                <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-red-600 to-pink-600"></span>
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg">
                 We believe in the power of simplicity. Each piece in our collection is 
@@ -204,7 +204,7 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
             <AnimatedSection delay={400}>
               <h2 className="text-4xl font-bold mb-6 relative">
                 Sustainability
-                <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-purple-600 to-pink-600"></span>
+                <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-red-600 to-pink-600"></span>
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg">
                 Environmental responsibility is at the core of everything we do. From 
@@ -268,7 +268,7 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
       {/* Stats Section */}
       <div id="stats-section" className="bg-gray-50 py-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-64 h-64 bg-purple-500 rounded-full filter blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-0 left-0 w-64 h-64 bg-red-500 rounded-full filter blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-pink-500 rounded-full filter blur-3xl transform translate-x-1/2 translate-y-1/2"></div>
         </div>
         
@@ -278,9 +278,9 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {statsVisible && (
               <>
-                <StatsCounter end={100} label="Unique Designs" />
-                <StatsCounter end={50} label="Thousand Happy Customers" />
-                <StatsCounter end={15} label="Countries Shipped" />
+                <StatsCounter end={50} label="Unique Designs" />
+                <StatsCounter end={300} label="Thousand Happy Customers" />
+                <StatsCounter end={10} label="Countries Shipped" />
               </>
             )}
           </div>
@@ -289,7 +289,7 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
             <AnimatedSection delay={100}>
               <div className="bg-white p-8 rounded-xl shadow-lg text-center">
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Heart className="w-8 h-8 text-purple-600" />
+                  <Heart className="w-8 h-8 text-red-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">Handcrafted Care</h3>
                 <p className="text-gray-600">Every piece is crafted with meticulous attention to detail and quality.</p>
@@ -309,7 +309,7 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
             <AnimatedSection delay={300}>
               <div className="bg-white p-8 rounded-xl shadow-lg text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <ShoppingBag className="w-8 h-8 text-blue-600" />
+                  <ShoppingBag className="w-8 h-8 text-red-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">Premium Experience</h3>
                 <p className="text-gray-600">From browsing to unboxing, we ensure a memorable journey with every purchase.</p>
@@ -327,7 +327,7 @@ Our vision is to become a globally recognized Sri Lankan fashion label that chal
             alt="Background" 
             className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-red-900/90 to-black/90"></div>
         </div>
         
         <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">

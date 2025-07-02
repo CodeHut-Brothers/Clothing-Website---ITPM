@@ -66,14 +66,14 @@ export default function ProductDetail() {
 
   return (
     <div className="pt-20 pb-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-10 pt-10 ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-9">
           <div className="relative">
             <div className="aspect-square overflow-hidden rounded-lg">
               <img
                 src={product.images[currentImageIndex]}
                 alt={product.name}
-                className="h-full w-full object-cover"
+                className="absolute h-max max-full object-contain "
               />
             </div>
             
