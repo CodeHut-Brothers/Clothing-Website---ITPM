@@ -21,6 +21,10 @@ import Footer from './components/Footer';
 import Checkoutkoko from './pages/koko/Checkoutkoko';
 import Successkoko from './pages/koko/PaymentSuccess';
 import Cancelkoko from './pages/koko/PaymentCancel';
+import Privacy from './pages/PrivacyPolicy'
+import TermAndCondition from './pages/TermAndCondition'
+import ReturnPolicy from './pages/ReturnPolicy';
+import FAQPage from './pages/FAQPage';
 
 function AppRoutes() {
   const location = useLocation();
@@ -41,6 +45,10 @@ function AppRoutes() {
      
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/faqpage" element={<FAQPage />} />
+        <Route path="/returnpolicy" element={<ReturnPolicy />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/termandcondition" element={<TermAndCondition />} />
         <Route path="/store" element={<Store />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />

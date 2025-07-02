@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, X } from 'lucide-react';
 
 // Reuse the same types from your main Store component
-type Category = 'all' | 'mens' | 'womens' | 'unisex' | 'caps' | 'bags' | 'shoes';
+type Category = 'all' | 'mens' | 'womens' | 'unisex' ;
 type Subcategory = string;
 
 interface Product {
@@ -31,7 +31,7 @@ const MiniStore = ({
   const [error, setError] = useState(null);
 
   // Limited categories for the mini store
-  const categories = ['all', 'mens', 'womens', 'unisex', 'caps'];
+  const categories = ['all', 'mens', 'womens', 'unisex'];
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -88,7 +88,7 @@ const MiniStore = ({
   }
 
   return (
-    <div className="bg-white py-8 px-4 sm:px-6 rounded-xl">
+    <div className="bg-white py-8 px-4 sm:px-6 ">
       <div className="max-w-6xl mx-auto">
         {/* Header section - More compact on mobile */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
@@ -108,7 +108,7 @@ const MiniStore = ({
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0
+              className={`px-3 py-1.5  text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0
                 ${selectedCategory === category
                   ? 'bg-black text-white'
                   : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
@@ -121,49 +121,50 @@ const MiniStore = ({
 
         {/* Product grid - 2 per row on mobile, 4 per row on desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          {sortedProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition-all duration-300 hover:-translate-y-1"
-            >
-              <a href={`/product/${product.id}`}>
-                <div className="relative aspect-square bg-gray-100">
-                  {product.images && product.images.length > 0 ? (
-                    <img 
-                      src={product.images[0]} 
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <ShoppingBag size={20} className="text-gray-400" />
-                    </div>
-                  )}
-                  
-                  {product.status === 'low-stock' && (
-                    <span className="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded text-xs">
-                      Low Stock
-                    </span>
-                  )}
-                  
-                  {product.status === 'sold-out' && (
-                    <span className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded text-xs">
-                      Sold Out
-                    </span>
-                  )}
-                </div>
-                
-                <div className="p-2 sm:p-3">
-                  <h3 className="font-medium text-gray-900 text-xs sm:text-sm truncate">{product.name}</h3>
-                  <div className="mt-1 flex justify-between items-center">
-                    <p className="font-bold text-gray-900 text-xs sm:text-sm">LKR {product.price.toFixed(2)}</p>
-                    <p className="text-xs text-gray-500 capitalize hidden sm:block">{product.category}</p>
-                  </div>
-                </div>
-              </a>
+  {sortedProducts.map((product) => (
+    <div
+      key={product.id}
+      className="bg-white overflow-hidden shadow hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+    >
+      <a href={`/product/${product.id}`}>
+        <div className="relative h-72 sm:h-80 bg-gray-100"> {/* increased card height */}
+          {product.images && product.images.length > 0 ? (
+            <img 
+              src={product.images[0]} 
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <ShoppingBag size={24} className="text-gray-400" />
             </div>
-          ))}
+          )}
+          
+          {product.status === 'low-stock' && (
+            <span className="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded">
+              Low Stock
+            </span>
+          )}
+          
+          {product.status === 'sold-out' && (
+            <span className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded">
+              Sold Out
+            </span>
+          )}
         </div>
+        
+        <div className="p-3 sm:p-4">
+          <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{product.name}</h3>
+          <div className="mt-2 flex justify-between items-center">
+            <p className="font-bold text-gray-900 text-sm sm:text-base">LKR {product.price.toFixed(2)}</p>
+            <p className="text-xs text-gray-500 capitalize hidden sm:block">{product.category}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  ))}
+</div>
+
         
         {sortedProducts.length === 0 && (
           <div className="text-center py-8">

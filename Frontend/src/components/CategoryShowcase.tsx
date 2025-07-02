@@ -32,8 +32,7 @@ export default function CategoryShowcase() {
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-2">Shop By Category</h2>
-        <p className="text-gray-600 text-center mb-8">Find your perfect style in our curated collections</p>
+       
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((category) => (
@@ -67,20 +66,7 @@ export default function CategoryShowcase() {
           ))}
         </div>
         
-        <div className="mt-10 flex justify-center space-x-4">
-          <button 
-            onClick={() => navigate('/store')}
-            className="bg-black text-white px-6 py-3 border border-black hover:bg-white hover:text-black transition-colors duration-300"
-          >
-            View All Collections
-          </button>
-          <button 
-            onClick={() => navigate('/store?featured=true')}
-            className="bg-white text-black px-6 py-3 border border-black hover:bg-black hover:text-white transition-colors duration-300"
-          >
-            Featured Items
-          </button>
-        </div>
+        
       </div>
     </section>
   );

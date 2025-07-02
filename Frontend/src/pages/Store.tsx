@@ -106,14 +106,14 @@ export default function Store() {
       
 
       {/* Product Filter */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-12 ">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8"
         >
-          <div className="relative w-full md:w-96">
+          {/* <div className="relative w-full md:w-96 mt-11">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
@@ -122,9 +122,9 @@ export default function Store() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black shadow-sm"
             />
-          </div>
+          </div> */}
 
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 px-4 py-3 rounded-xl bg-black text-white"
@@ -132,7 +132,7 @@ export default function Store() {
               <Filter size={18} />
               <span>Filter</span>
             </button>
-          </div>
+          </div> */}
         </motion.div>
 
         {showFilters && (
@@ -193,7 +193,7 @@ export default function Store() {
           transition={{ delay: 0.2, duration: 0.8 }}
         >
           <AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-20">
               {sortedProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
@@ -204,7 +204,7 @@ export default function Store() {
                     transition: { delay: index * 0.1, duration: 0.5 }
                   }}
                   whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                  className="transform transition-all duration-300 hover:shadow-xl rounded-2xl overflow-hidden bg-white"
+                  className="transform transition-all duration-300 hover:shadow-xl  overflow-hidden bg-white"
                 >
                   <ProductCard product={product} />
                 </motion.div>

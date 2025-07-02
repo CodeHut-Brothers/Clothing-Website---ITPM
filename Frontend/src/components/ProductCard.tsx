@@ -10,7 +10,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group relative bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square overflow-hidden h-80 w-full md:h-72 md:w-72 ">
+        <div className="aspect-square overflow-hidden h-80 w-full md:h-96 md:w-72 ">
           <img
             src={product.images[0]}
             alt={product.name}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, ChevronDown,ShoppingBag, Star, ChevronRight, ChevronLeft, Instagram, Twitter, Facebook } from 'lucide-react';
 import axios from 'axios';
 import CategoryShowcase from '../components/CategoryShowcase';
@@ -9,6 +9,8 @@ import Featuredcollection from '../components/FeaturedCollection'
 import MiniStore from '../components/MiniStore'
 import Footer from '../components/Footer';
 import Heronew from '../components/Hero';
+import Vid from '../data/vid2.mp4'
+
 
 // Animation helpers
 const useIntersectionObserver = (options = {}) => {
@@ -378,126 +380,7 @@ const FashionGallery = () => {
   );
 };
 
-// Reviews component with animation
-const Reviews = () => {
-  const reviews = [
-    {
-      id: 1,
-      name: "Alex Thompson",
-      avatar: "https://i.pravatar.cc/150?img=11",
-      rating: 5,
-      text: "The quality of these clothes is exceptional. Every piece I've purchased has become a staple in my wardrobe."
-    },
-    {
-      id: 2,
-      name: "Jamie Lee",
-      avatar: "https://i.pravatar.cc/150?img=5",
-      rating: 5,
-      text: "I love how unique these designs are! I always get compliments when wearing Cannibal clothing."
-    },
-    {
-      id: 3,
-      name: "Sam Richards",
-      avatar: "https://i.pravatar.cc/150?img=8",
-      rating: 4,
-      text: "Fast shipping and the fit is perfect. The attention to detail in each garment is impressive."
-    }
-  ];
 
-  return (
-    <div className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
-          <div className="w-24 h-1 bg-black mx-auto"></div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {reviews.map((review, index) => {
-            const [ref, isVisible] = useIntersectionObserver({
-              threshold: 0.1,
-              triggerOnce: true
-            });
-            
-            return (
-              <div
-                ref={ref}
-                key={review.id}
-                className={`bg-gray-50 p-6 rounded-lg shadow-lg transition-all duration-700 transform ${
-                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                }`}
-                style={{ transitionDelay: `${index * 150}ms` }}
-              >
-                <div className="flex items-center space-x-4 mb-4">
-                  <img
-                    src={review.avatar}
-                    alt={review.name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-                  />
-                  <div>
-                    <p className="font-semibold text-lg">{review.name}</p>
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">&ldquo;{review.text}&rdquo;</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Brand philosophy with parallax
-const BrandPhilosophy = () => {
-  const [ref, isVisible] = useIntersectionObserver({
-    threshold: 0.1,
-    triggerOnce: true
-  });
-
-  return (
-    <section className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-black">
-        <div className="w-full h-full opacity-40 bg-gradient-to-br from-purple-900 to-black"></div>
-      </div>
-      
-      <div ref={ref} className="relative max-w-5xl mx-auto px-4 text-center text-white z-10">
-        <h2 className={`text-4xl font-bold mb-6 transition-all duration-1000 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          Our Philosophy
-        </h2>
-        
-        <div className={`w-24 h-1 bg-white mx-auto mb-8 transition-all duration-1000 delay-100 ${
-          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-        }`}></div>
-        
-        <p className={`text-xl max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-200 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          At Cannibal, we believe in the power of self-expression through minimalist design and superior quality.
-          Every piece tells a story of urban culture and contemporary lifestyle, crafted for those who dare to stand out.
-        </p>
-        
-        <div className={`mt-8 transition-all duration-1000 delay-300 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          <Link to="/about" className="inline-flex items-center bg-white text-black px-8 py-3 rounded-full hover:bg-black hover:text-white border border-white transition-colors">
-            Learn More About Us
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 // Newsletter component
 const Newsletter = () => {
@@ -532,17 +415,7 @@ const Newsletter = () => {
           </button>
         </form>
         
-        <div className="flex justify-center gap-6 mt-8">
-          <a href="#" className="text-gray-600 hover:text-black transition-colors">
-            <Instagram className="w-6 h-6" />
-          </a>
-          <a href="#" className="text-gray-600 hover:text-black transition-colors">
-            <Twitter className="w-6 h-6" />
-          </a>
-          <a href="#" className="text-gray-600 hover:text-black transition-colors">
-            <Facebook className="w-6 h-6" />
-          </a>
-        </div>
+        
       </div>
     </div>
   );
@@ -550,6 +423,7 @@ const Newsletter = () => {
 
 // Main Home component
 export default function Home() {
+  const navigate = useNavigate();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -618,13 +492,46 @@ export default function Home() {
       
 
       <div className="mt-16 text-center">
-        <h2 className="text-3xl font-bold mb-6">Featured Collections</h2>
+        <h2 className="text-3xl font-bold mb-6 font-schabo">NEW ARRAIVALS</h2>
         <Featuredcollection />
       </div>
+
       
       <CategoryShowcase/>
 
-    <Newcollection/>
+      <div className="w-full relative overflow-hidden">
+      <video
+        className="w-full h-auto object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src={Vid} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+        {/* Overlay with button */}
+        <div className="absolute inset-60 flex items-center justify-start text-white text-center px-4 bg-black/00">
+          <div className="mt-56 ml-80 "> {/* <- shift down and left */}
+            <button
+              onClick={() => navigate('/store')}
+              className="group relative px-5 py-2 border border-white text-white font-semibold rounded-lg bg-transparent overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20"
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                Shop Now
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </span>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    
 
 
       

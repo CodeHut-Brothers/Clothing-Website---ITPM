@@ -180,11 +180,10 @@ export default function About() {
                 <span className="absolute -bottom-2 left-0 w-16 h-1 bg-gradient-to-r from-purple-600 to-pink-600"></span>
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg">
-                CANNIBLE.CO was born from a passion for minimalist design and urban culture. 
-                Founded in 2024, we set out to create clothing that embodies both style and 
-                substance, challenging the conventional boundaries of streetwear. Our vision
-                is to create pieces that tell a story, that connect with people on a deeper level
-                than just fashion.
+                Cannibal is more than just a clothing brand - it’s a movement built on bold self-expression, fearless individuality, and uncompromising quality. Founded in Sri Lanka, we blend cutting-edge style with affordability, making high-quality fashion accessible to everyone who dares to stand out.
+We believe clothing should be a weapon of confidence. That’s why every Cannibal piece is designed to empower - combining trend-forward aesthetics with durable craftsmanship and fair pricing. Whether you're walking the city streets or carving your own path, Cannibal moves with you, every step stronger.
+Our vision is to become a globally recognized Sri Lankan fashion label that challenges convention, sets trends, and celebrates identity. At Cannibal, we don’t follow fashion - we devour it, reshape it, and make it our own.
+<p>EVERY STEP, STRONGER</p>
               </p>
             </AnimatedSection>
 
