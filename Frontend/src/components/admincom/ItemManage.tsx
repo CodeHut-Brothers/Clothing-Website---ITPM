@@ -19,7 +19,18 @@ const initialFormData = () => ({
   colors: [],
   quantity: 0,
   status: 'available',
+  tagline: '',
+  fit: '',
+  fabric: '',
+  functionality: '',
+  material: '',
+  fabricWeight: '',
+  care: '',
+  sizeFit: '',
+  maleModel: '',
+  femaleModel: '',
 });
+
 
 const ItemManage = () => {
   const [items, setItems] = useState([]);
@@ -77,7 +88,7 @@ const ItemManage = () => {
     e.preventDefault();
 
     // Basic form validation
-    if (!formData.name || !formData.price || !formData.description || !formData.category) {
+    if (!formData.name || !formData.price || !formData.category) {
       toast.error('Please fill in all the required fields.');
       return;
     }
@@ -305,6 +316,16 @@ const ItemManage = () => {
                 </button>
                 <button
                   className={`px-6 py-3 font-medium transition-colors ${
+                    activeTab === 'details'
+                      ? 'text-indigo-600 border-b-2 border-indigo-600'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                  onClick={() => setActiveTab('details')}
+                >
+                  Details
+                </button>
+                <button
+                  className={`px-6 py-3 font-medium transition-colors ${
                     activeTab === 'status'
                       ? 'text-indigo-600 border-b-2 border-indigo-600'
                       : 'text-gray-500 hover:text-gray-700'
@@ -325,6 +346,18 @@ const ItemManage = () => {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Product ID</label>
+                        <input
+                          type="text"
+                          value={formData.id}
+                          onChange={(e) => setFormData({ ...formData, id: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="Enter unique product ID"
+                          required
+                          disabled={editingItem} // Disable editing ID for existing products
+                        />
+                      </div>
+                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
                         <input
                           type="text"
@@ -338,22 +371,33 @@ const ItemManage = () => {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Price (LKR)</label>
                         <div className="w-full">
-      <input
-        type="number"
-        value={formData.price}
-        onChange={handleChange}
-        className={`w-full p-3 bg-gray-50 border ${
-          error ? "border-red-400" : "border-gray-200"
-        } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all`}
-        placeholder="Enter price"
-        required
-      />
-      {error && (
-        <p className="mt-2 text-sm text-red-500 animate-pulse">
-          {error}
-        </p>
-      )}
-    </div>
+                          <input
+                            type="number"
+                            value={formData.price}
+                            onChange={handleChange}
+                            className={`w-full p-3 bg-gray-50 border ${
+                              error ? "border-red-400" : "border-gray-200"
+                            } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all`}
+                            placeholder="Enter price"
+                            required
+                          />
+                          {error && (
+                            <p className="mt-2 text-sm text-red-500 animate-pulse">
+                              {error}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                        <input
+                          type="number"
+                          value={formData.quantity}
+                          onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="Enter stock quantity"
+                          required
+                        />
                       </div>
                       <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -363,7 +407,7 @@ const ItemManage = () => {
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                           placeholder="Enter product description"
                           rows="4"
-                          required
+                          
                         />
                       </div>
                       <div>
@@ -374,29 +418,29 @@ const ItemManage = () => {
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                           required
                         >
-                            <option value="">Select Category</option>
-                        <option value="backpack">Backpack</option>
-                        <option value="caps">Caps</option>
-                        <option value="Casual">Casual</option>
-                        <option value="Handbag">Handbag</option>
-                        <option value="hoodie">Hoodie</option>
-                        <option value="jeans">Jeans</option>
-                        <option value="pants">Pants</option>
-                        <option value="polo_tshirt">Polo T-Shirt</option>
-                        <option value="shoes">Shoes</option>
-                        <option value="shorts">Shorts</option>
-                        <option value="skirt">Skirt</option>
-                        <option value="tshirt">T-Shirt</option>
-                      </select>
+                          <option value="">Select Category</option>
+                          <option value="backpack">Backpack</option>
+                          <option value="cap">Cap</option>
+                          <option value="Casual">Casual</option>
+                          <option value="Handbag">Handbag</option>
+                          <option value="hoodie">Hoodie</option>
+                          <option value="jeans">Jeans</option>
+                          <option value="pants">Pants</option>
+                          <option value="polo_tshirt">Polo T-Shirt</option>
+                          <option value="shoes">Shoes</option>
+                          <option value="shorts">Shorts</option>
+                          <option value="skirt">Skirt</option>
+                          <option value="tshirt">T-Shirt</option>
+                        </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
                         <input
-                          type="number"
-                          value={formData.quantity}
-                          onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
+                          type="text"
+                          value={formData.tagline}
+                          onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                          placeholder="Enter stock quantity"
+                          placeholder="Enter product tagline"
                         />
                       </div>
                     </div>
@@ -419,6 +463,7 @@ const ItemManage = () => {
                           onChange={(e) => setFormData({ ...formData, sizes: e.target.value.split(',').map((size) => size.trim()) })}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                           placeholder="e.g. S, M, L, XL (separate with commas)"
+                          required
                         />
                         <p className="mt-1 text-sm text-gray-500">Separate each size with a comma</p>
                       </div>
@@ -431,6 +476,7 @@ const ItemManage = () => {
                           onChange={(e) => setFormData({ ...formData, colors: e.target.value.split(',').map((color) => color.trim()) })}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                           placeholder="e.g. Red, Blue, Black (separate with commas)"
+                          required
                         />
                         <p className="mt-1 text-sm text-gray-500">Separate each color with a comma</p>
                       </div>
@@ -443,6 +489,7 @@ const ItemManage = () => {
                           onChange={handleImageChange}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                           placeholder="Enter image URLs separated by commas"
+                          required
                         />
                         <p className="mt-1 text-sm text-gray-500">Paste full image URLs, separated by commas</p>
                       </div>
@@ -477,6 +524,108 @@ const ItemManage = () => {
                           </div>
                         </div>
                       )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Details Tab */}
+                {activeTab === 'details' && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Fit</label>
+                        <input
+                          type="text"
+                          value={formData.fit}
+                          onChange={(e) => setFormData({ ...formData, fit: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. Regular fit, Slim fit"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Fabric</label>
+                        <input
+                          type="text"
+                          value={formData.fabric}
+                          onChange={(e) => setFormData({ ...formData, fabric: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. 100% Cotton, Polyester blend"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Material</label>
+                        <input
+                          type="text"
+                          value={formData.material}
+                          onChange={(e) => setFormData({ ...formData, material: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. Leather, Canvas, Denim"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Fabric Weight</label>
+                        <input
+                          type="text"
+                          value={formData.fabricWeight}
+                          onChange={(e) => setFormData({ ...formData, fabricWeight: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. 180 GSM, Lightweight"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Functionality</label>
+                        <textarea
+                          value={formData.functionality}
+                          onChange={(e) => setFormData({ ...formData, functionality: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="Describe the product functionality"
+                          rows="3"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Care Instructions</label>
+                        <textarea
+                          value={formData.care}
+                          onChange={(e) => setFormData({ ...formData, care: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. Machine wash cold, Do not bleach"
+                          rows="3"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Size & Fit Information</label>
+                        <textarea
+                          value={formData.sizeFit}
+                          onChange={(e) => setFormData({ ...formData, sizeFit: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="Detailed sizing and fit information"
+                          rows="3"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Male Model Info</label>
+                        <input
+                          type="text"
+                          value={formData.maleModel}
+                          onChange={(e) => setFormData({ ...formData, maleModel: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. Height: 6'0, Wearing size: M"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Female Model Info</label>
+                        <input
+                          type="text"
+                          value={formData.femaleModel}
+                          onChange={(e) => setFormData({ ...formData, femaleModel: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                          placeholder="e.g. Height: 5'6, Wearing size: S"
+                        />
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -587,7 +736,7 @@ const ItemManage = () => {
                     {editingItem ? 'Update Item' : 'Save Item'}
                   </motion.button>
                 </div>
-              </form>
+              </form> 
             </div>
           </motion.div>
         )}

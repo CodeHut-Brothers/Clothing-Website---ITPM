@@ -1,4 +1,3 @@
-// controllers/productController.js
 const Product = require('../models/Product');
 
 // GET all products
@@ -11,11 +10,12 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
+// GET latest 3 products
 exports.getAllProductsAcc = async (req, res) => {
   try {
     const products = await Product.find()
-      .sort({ createdAt: -1 })  // Sort by createdAt in descending order
-      .limit(3);  // Limit to 3 products
+      .sort({ createdAt: -1 })
+      .limit(3);
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -23,11 +23,12 @@ exports.getAllProductsAcc = async (req, res) => {
   }
 };
 
+// GET latest 10 products
 exports.getLatestProducts = async (req, res) => {
   try {
     const latestProducts = await Product.find()
-      .sort({ createdAt: -1 })  // Sort by newest first
-      .limit(10);               // Change the limit as needed
+      .sort({ createdAt: -1 })
+      .limit(10);
     res.json(latestProducts);
   } catch (error) {
     console.error('Error fetching latest products:', error);
@@ -35,8 +36,7 @@ exports.getLatestProducts = async (req, res) => {
   }
 };
 
-
-// GET a single product by ID
+// GET single product by ID
 exports.getProductById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -50,9 +50,17 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// POST a new product
+// POST new product
 exports.addProduct = async (req, res) => {
-  const { id, name, price, description, category, images, sizes, colors, quantity, status } = req.body;
+  const {
+    id, name, price, description, category, images,
+    sizes, colors, quantity, status,
+
+    // Optional fields
+    tagline, fit, fabric, functionality,
+    material, fabricWeight, care,
+    sizeFit, maleModel, femaleModel
+  } = req.body;
 
   try {
     const newProduct = new Product({
@@ -66,6 +74,18 @@ exports.addProduct = async (req, res) => {
       colors,
       quantity,
       status,
+
+      // Include optional fields
+      tagline,
+      fit,
+      fabric,
+      functionality,
+      material,
+      fabricWeight,
+      care,
+      sizeFit,
+      maleModel,
+      femaleModel
     });
 
     await newProduct.save();
@@ -75,10 +95,10 @@ exports.addProduct = async (req, res) => {
   }
 };
 
-// PUT (update) a product by ID
+// PUT update product by ID
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body; // This will include optional fields if passed
 
   try {
     const product = await Product.findOneAndUpdate({ id }, updates, { new: true });
@@ -91,7 +111,7 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// DELETE a product by ID
+// DELETE product by ID
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
 

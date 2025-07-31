@@ -182,11 +182,79 @@ export default function ProductDetail() {
               </button>
 
               {/* Product Description Section - Moved after Add to Cart button */}
+              {/* Product Description Section - Updated with detailed format */}
               <div className="pt-4 border-t border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Product Description</h3>
-                <div className="text-gray-600 leading-relaxed">
-                  {product.description}
+                
+                {/* Main tagline */}
+                <div className="mb-4">
+                  <p className="text-gray-800 font-medium text-base">
+                    {product.tagline || "Timeless Comfort, Modern Style."}
+                  </p>
                 </div>
+
+                {/* Key Features */}
+                <div className="mb-4 space-y-2">
+                  <div className="flex">
+                    <span className="text-gray-700 font-medium min-w-[120px]">• Fit:</span>
+                    <span className="text-gray-600 flex-1">{product.fit || "Regular fit with comfortable silhouette"}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="text-gray-700 font-medium min-w-[120px]">• Fabric:</span>
+                    <span className="text-gray-600 flex-1">{product.fabric || "Premium cotton blend"}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="text-gray-700 font-medium min-w-[120px]">• Functionality:</span>
+                    <span className="text-gray-600 flex-1">{product.functionality || "Versatile design for any occasion"}</span>
+                  </div>
+                </div>
+
+                {/* Product Details */}
+                <div className="mb-4">
+                  <h4 className="text-gray-900 font-semibold mb-2">Product Details:</h4>
+                  <div className="space-y-2">
+                    <div className="flex">
+                      <span className="text-gray-700 font-medium min-w-[140px]">• Material:</span>
+                      <span className="text-gray-600 flex-1">{product.material || "100% Premium Cotton"}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-700 font-medium min-w-[140px]">• Fabric Weight:</span>
+                      <span className="text-gray-600 flex-1">{product.fabricWeight || "Medium weight (180-200 GSM)"}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-700 font-medium min-w-[140px]">• Materials & Care:</span>
+                      <span className="text-gray-600 flex-1">{product.care || "Machine wash cold, tumble dry low"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Size & Fit */}
+                <div className="mb-4">
+                  <h4 className="text-gray-900 font-semibold mb-2">SIZE & FIT:</h4>
+                  <div className="space-y-2">
+                    <div className="flex">
+                      <span className="text-gray-700 font-medium">• </span>
+                      <span className="text-gray-600 flex-1">{product.sizeFit || "True to size - order your normal size"}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-700 font-medium min-w-[120px]">• Male Model:</span>
+                      <span className="text-gray-600 flex-1">{product.maleModel || "6'0\" wearing size M"}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-700 font-medium min-w-[120px]">• Female Model:</span>
+                      <span className="text-gray-600 flex-1">{product.femaleModel || "5'6\" wearing size S"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional description if available */}
+                {product.description && (
+                  <div className="mt-4 pt-3 border-t border-gray-100">
+                    <div className="text-gray-600 leading-relaxed">
+                      {product.description}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

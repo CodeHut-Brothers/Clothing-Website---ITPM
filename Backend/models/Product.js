@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
+    
   },
   category: {
     type: String,
@@ -54,6 +54,49 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+   tagline: {
+    type: String,
+    default: ''
+  },
+  fit: {
+    type: String,
+    default: ''
+  },
+  fabric: {
+    type: String,
+    default: ''
+  },
+  functionality: {
+    type: String,
+    default: ''
+  },
+  material: {
+    type: String,
+    default: ''
+  },
+  fabricWeight: {
+    type: String,
+    default: ''
+  },
+  care: {
+    type: String,
+    default: ''
+  },
+  sizeFit: {
+    type: String,
+    default: ''
+  },
+  maleModel: {
+    type: String,
+    default: ''
+  },
+  femaleModel: {
+    type: String,
+    default: ''
+  },
+
+
+
   status: {
     type: String,
     enum: ['available', 'low-stock', 'sold-out'], // Enum for product status
