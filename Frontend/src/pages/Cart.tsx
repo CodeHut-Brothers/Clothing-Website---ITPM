@@ -479,7 +479,7 @@ export default function Cart() {
                   Home Page
                 </button>
                 <button
-                  onClick={() => navigate('/contact-us')}
+                  onClick={() => navigate('/contact')}
                   className="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
                 >
                   Contact Us
